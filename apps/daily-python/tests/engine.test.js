@@ -140,3 +140,11 @@ test('export/import round-trips and rejects junk', () => {
   assert.throws(() => E.importState('{"v":9}'));
   assert.throws(() => E.importState('{"v":1}'));
 });
+
+test('the real question bank gives a full session of known questions', () => {
+  const Bank = require('../questions.js');
+  const ids = E.pickSession(E.newState(), Bank.QUESTIONS, Bank.UNLOCKED, T);
+  assert.equal(ids.length, 5);
+  const known = new Set(Bank.QUESTIONS.map(q => q.id));
+  ids.forEach(id => assert.ok(known.has(id)));
+});
