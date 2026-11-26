@@ -7,7 +7,9 @@ Newest first. Each entry has the date, the chat it came from, what was done, and
 ## 2026-11-26 · Project manager
 - Set up this repo as the shared knowledge base: profile, goals, skills, curriculum, projects, conventions and the chat registry.
 - Backfilled from earlier chats (entries below are reconstructed and approximate).
-- **Next up (suggested):** add the confirmation date to `goals.md`. Decide on Phase 1 sign-off and the capstone calculator.
+- Confirmation is mid-Feb 2027. Adrian says it isn't a deadline for this project.
+- `compare_materials` exercise started but not finished.
+- **Next up:** finish `compare_materials` in the tutor chat, then the rest of Phase 1. Capstone calculator to follow (suggested).
 
 ## 2026-11-26 · CS50 discussion
 - Compared CS50x and CS50P. Concluded that C isn't strictly needed if Python is the only goal, but it shows what Python abstracts away.

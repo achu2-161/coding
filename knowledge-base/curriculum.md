@@ -12,7 +12,7 @@ Five phases. Every example is grounded in building science and LCA. Main environ
 
 ## Phase 1: Python foundations
 - [x] Lesson 1: variables and types, f-strings, lists and loops with `zip()`, dictionaries as emission factor lookups, functions with docstrings
-- [ ] Exercise: `compare_materials` function (set, completion not recorded)
+- [ ] Exercise: `compare_materials` function (🔵 in progress, not finished; **pick up here next**)
 - [ ] Remaining foundations: `while` loops, list comprehensions, error handling, file I/O (CSV), modules
 - [ ] **Phase 1 capstone (suggested):** a small embodied GHG emissions calculator that reads material quantities and emission factors and prints a formatted lifecycle-stage table
 
