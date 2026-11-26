@@ -6,6 +6,7 @@ Five tap-based questions a day on your phone. Each day you finish adds a layer t
 - **Daily session:** 5 questions. Normally 3 review and 2 new. After a break, it's all review until you're caught up.
 - **Spaced repetition:** a right answer moves a question to a longer gap before it comes back (1 → 2 → 4 → 8 → 16 days). A wrong answer brings it back tomorrow.
 - **Streaks:** finishing a session counts for the day. You start with 2 streak freezes, earn 1 for each 7-day streak, and can hold up to 3. Freezes cover missed days automatically.
+- **Explain more:** under each answer, a button asks Claude for a fuller explanation of that question. You approve it the first time. Each tap uses a little Claude usage.
 - **Backup:** progress is stored in your phone's browser. Use ⚙︎ → Copy backup now and then, and paste it into a note.
 
 ## Files
@@ -19,7 +20,7 @@ Five tap-based questions a day on your phone. Each day you finish adds a layer t
 | `tests/engine.test.js` | Engine tests |
 
 ## For the tutor chat: adding questions
-1. Add questions to `QUESTIONS` in `questions.js`. For `order` questions, list any other order that also works in `alts`; the verifier will tell you. Use building science and LCA examples, keep code short (phone screen), and write a clear `explain`.
+1. Add questions to `QUESTIONS` in `questions.js`. **Coding questions only**: no PhD or LCA knowledge quizzes (building-science context inside code is fine). For `order` questions, list any other order that also works in `alts`; the verifier will tell you. Use building science and LCA examples, keep code short (phone screen), and write a clear `explain`.
 2. When Adrian starts a new topic in `skills.md`, add it to `TOPICS` and `UNLOCKED`.
 3. Check and build:
    ```

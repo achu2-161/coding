@@ -5,7 +5,8 @@
 A phone app with 5 tap-based questions a day: multiple choice, "what does this print?", spot the bug, fill the blank, and put lines in order. It uses spaced repetition, so returning after a break starts with review. Streaks are pictured as a rammed-earth wall that gains a layer each day you practise. You start with 2 streak freezes, earn 1 per 7-day streak, and can hold up to 3.
 - Questions follow `skills.md`: only topics in `UNLOCKED` appear. Every code answer is checked by real Python (`verify_questions.py`).
 - Published as a private artifact, "Daily Python": https://claude.ai/artifact/ERB3MyZEsr2YBKGMdFLGyn (artifact id `6ca6d743-656b-459a-aec1-b5ecf4fc08d1`). Progress is stored in the phone's browser; back it up with ⚙︎ → Copy backup.
-- Built 2026-11-26 with 67 questions covering Phase 1.
+- Built 2026-11-26. Coding questions only (58 on Phase 1); Adrian doesn't want PhD/LCA content quizzed here.
+- "Explain more" button under each answer asks Claude for a fuller explanation (uses Adrian's Claude usage; needs his approval the first time).
 
 ### Python Learn (`python_learn.html`, `python_learn_v2.html`)
 A local, single-file HTML app for learning Python.

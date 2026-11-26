@@ -15,12 +15,13 @@
   const TOPICS = {
     variables: 'Variables & types', operators: 'Operators', conditionals: 'Conditionals',
     'lists-loops': 'Lists & loops', zip: 'zip()', dicts: 'Dictionaries', tuples: 'Tuples',
-    functions: 'Functions', fstrings: 'f-strings', terminology: 'Terminology', lca: 'LCA & building science',
+    functions: 'Functions', fstrings: 'f-strings',
   };
 
-  // Topics Adrian has started (🟡 or ✅ in knowledge-base/skills.md).
+  // Coding topics Adrian has started (🟡 or ✅ in knowledge-base/skills.md).
+  // Coding questions only: no PhD/LCA content quizzes (Adrian, 2026-11-26).
   const UNLOCKED = ['variables', 'operators', 'conditionals', 'lists-loops', 'zip', 'dicts',
-    'tuples', 'functions', 'fstrings', 'terminology', 'lca'];
+    'tuples', 'functions', 'fstrings'];
 
   const P = 'What does this print?';
 
@@ -274,40 +275,11 @@
       options: ['24%', '0.24%', '23.7%', '0%'], answer: 0,
       explain: '% multiplies by 100 and adds a percent sign. .0 means no decimals.' },
 
-    // ---------- terminology ----------
-    { id: 'term-1', topic: 'terminology', type: 'mcq', prompt: 'Which term does this project use?',
-      options: ['embodied GHG emissions', 'embodied carbon', 'carbon emissions', 'carbon-intensive'], answer: 0,
-      explain: 'Carbon itself isn\'t the problem; greenhouse gases are. So: embodied greenhouse gas (GHG) emissions.' },
-    { id: 'term-2', topic: 'terminology', type: 'mcq', prompt: 'A 6-storey apartment block is…',
-      options: ['medium-rise', 'low-rise', 'high-rise', 'super high-rise'], answer: 0,
-      explain: 'ABS/NSW definitions: low-rise 1–3, medium-rise 4–8, high-rise 9–19, super high-rise 20+.' },
-    { id: 'term-3', topic: 'terminology', type: 'mcq', prompt: 'Which phrasing matches the project conventions?',
-      options: ['Households use energy for heating', 'Households consume carbon for heating', 'Households are carbon-intensive heaters', 'Households emit carbon via heating'], answer: 0,
-      explain: 'Talk about energy use, using energy and users of energy.' },
-
-    // ---------- LCA & building science ----------
-    { id: 'lca-1', topic: 'lca', type: 'mcq', prompt: 'In EN 15978, stages A1–A3 are the…',
-      options: ['Product stage (raw materials, transport, manufacturing)', 'Use stage', 'End-of-life stage', 'Benefits beyond the system boundary'], answer: 0,
-      explain: 'A1 raw material supply, A2 transport to the factory, A3 manufacturing.' },
-    { id: 'lca-2', topic: 'lca', type: 'mcq', prompt: 'Module B6 covers…',
-      options: ['Operational energy use', 'Maintenance', 'Demolition', 'Transport to site'], answer: 0,
-      explain: 'B6 is operational energy use, which is where operational GHG emissions come from. B7 is operational water use.' },
-    { id: 'lca-3', topic: 'lca', type: 'mcq', prompt: 'Lower U-value means…',
-      options: ['Less heat flows through: better insulation', 'More heat flows through', 'Higher thermal mass', 'Higher embodied GHG emissions'], answer: 0,
-      explain: 'U-value (W/m²K) is the heat flow per square metre for each degree of temperature difference. Lower is better insulating.' },
-    { id: 'lca-4', topic: 'lca', type: 'mcq', prompt: 'What does an EPD provide?',
-      options: ['Verified life-cycle impacts of a product', 'A building\'s energy rating', 'A thermal comfort survey', 'A planning permit'], answer: 0,
-      explain: 'An Environmental Product Declaration reports a product\'s LCA results, usually per declared unit.' },
-    { id: 'lca-5', topic: 'lca', type: 'mcq', prompt: 'C1–C4 modules cover…',
-      options: ['End of life', 'Construction', 'Use', 'Product manufacture'], answer: 0,
-      explain: 'C1 deconstruction, C2 transport, C3 waste processing, C4 disposal.' },
-    { id: 'lca-6', topic: 'lca', type: 'predict', prompt: 'Heat loss through a wall (Q = U × A × ΔT). What does this print?',
+    // ---------- applied arithmetic ----------
+    { id: 'lca-6', topic: 'operators', type: 'predict', prompt: 'Heat loss through a wall (Q = U × A × ΔT). What does this print?',
       code: 'u = 0.5\narea = 20\ndelta_t = 15\nprint(u * area * delta_t)',
       options: ['150.0', '35.5', '150', '0.5'], answer: 0,
       explain: '0.5 W/m²K × 20 m² × 15 K = 150 W. The float u makes the result a float.' },
-    { id: 'lca-7', topic: 'lca', type: 'mcq', prompt: 'In your thermal simulator, how many hourly steps are in a year?',
-      options: ['8,760', '365', '525,600', '8,784 every year'], answer: 0,
-      explain: '365 × 24 = 8,760 hours, the length of a standard EPW weather file.' },
   ];
 
   return { TOPICS, UNLOCKED, QUESTIONS };

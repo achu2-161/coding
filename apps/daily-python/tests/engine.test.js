@@ -166,3 +166,18 @@ test('completeDay with the clock moved back does not count again', () => {
   assert.equal(r.alreadyDone, true);
   assert.equal(s.lastDay, T);
 });
+
+test('the bank only has coding topics', () => {
+  const Bank = require('../questions.js');
+  assert.ok(!Bank.UNLOCKED.includes('terminology') && !Bank.UNLOCKED.includes('lca'));
+  Bank.QUESTIONS.forEach(q => assert.ok(Bank.UNLOCKED.includes(q.topic), `${q.id} is ${q.topic}`));
+});
+
+test('explainPrompt gives Claude the question, the pick and the right answer', () => {
+  const q = { id: 'x', topic: 'dicts', type: 'predict', prompt: 'What does this print?',
+    code: 'f = {"a": 1}\nprint(f["b"])', options: ['KeyError', 'None'], answer: 0, explain: 'Missing key.' };
+  const p = E.explainPrompt(q, 'None', false);
+  for (const s of ['print(f["b"])', 'KeyError', 'picked: None', 'wrong', 'Missing key.', 'Australian English', 'embodied GHG emissions'])
+    assert.ok(p.includes(s), `missing ${s}`);
+  assert.ok(E.explainPrompt(q, 'KeyError', true).includes('right'));
+});

@@ -104,6 +104,34 @@
     return missed > state.freezes ? 0 : state.streak;
   }
 
+  // Prompt for the "Explain more" button. Claude has no memory, so send everything.
+  function explainPrompt(q, picked, correct) {
+    const right = q.type === 'mcq' || q.type === 'predict' ? q.options[q.answer]
+      : q.type === 'bug' ? `line ${q.bugLine + 1} should be: ${q.fixes[q.answer].trim()}`
+      : q.type === 'blank' ? q.chips[q.answer]
+      : q.lines.join('\n');
+    return [
+      'You are a friendly Python tutor. The learner is a PhD student in building science and LCA,',
+      'a Python beginner who knows some C from CS50. They are on their phone doing a quick daily quiz.',
+      `They just answered this ${q.type} question and got it ${correct ? 'right' : 'wrong'}.`,
+      '',
+      `Question: ${q.prompt}`,
+      q.code ? `Code:\n${q.code}` : '',
+      q.options ? `Options: ${q.options.join(' | ')}` : '',
+      q.chips ? `Choices for the blank: ${q.chips.join(' | ')}` : '',
+      q.fixes ? `Fix options: ${q.fixes.join(' | ')}` : '',
+      `They picked: ${picked}`,
+      `Correct answer: ${right}`,
+      `Short explanation already shown: ${q.explain}`,
+      '',
+      'Explain it more deeply than the short explanation, in under 150 words, plain text (no markdown headings or tables).',
+      correct ? 'Confirm why it is right and add one thing worth knowing next.'
+        : 'Explain why their pick was wrong and why the correct answer is right.',
+      'Step through what Python does line by line where it helps. Use a tiny building-science or LCA example if it helps.',
+      'Use Australian English. Say "embodied GHG emissions", never "embodied carbon" or "carbon emissions".',
+    ].filter(Boolean).join('\n');
+  }
+
   // ---- backup ----
   function exportState(state) { return JSON.stringify(state); }
   function importState(json) {
@@ -115,5 +143,5 @@
     return s;
   }
 
-  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, displayStreak, exportState, importState };
+  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, displayStreak, explainPrompt, exportState, importState };
 });

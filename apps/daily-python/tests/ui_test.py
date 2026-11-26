@@ -95,6 +95,43 @@ def test_lapsed_streak_shows_zero(p):
     b.close()
 
 
+FAKE_CLAUDE = """
+window.__prompts = [];
+window.claude = { use: async name => name !== 'sample' ? null : async (input, opts) => {
+  window.__prompts.push(input);
+  const text = 'Claude says: ' + (input.includes('KeyError') ? 'about KeyError' : 'something');
+  if (opts && opts.onText) opts.onText({ text, delta: text });
+  return { text, truncated: false };
+} };
+"""
+
+
+def test_explain_more_asks_claude(p):
+    b = p.chromium.launch(executable_path="/usr/bin/google-chrome")
+    pg = b.new_page(viewport={"width": 390, "height": 844})
+    pg.add_init_script(FAKE_CLAUDE)
+    pg.add_init_script(f"localStorage.setItem('{KEY}', {json.dumps(json.dumps(state(cards=only_new('dict-2'))))})")
+    pg.goto(PAGE.as_uri())
+    pg.click("#go")
+    pg.locator(".opt", has_text="None").click()
+    pg.click("#more")
+    pg.wait_for_selector(".more:has-text('Claude says')")
+    prompt = pg.evaluate("window.__prompts[0]")
+    assert 'print(factors["hemp"])' in prompt and "They picked: None" in prompt and "wrong" in prompt
+    assert "about KeyError" in pg.inner_text(".more")
+    b.close()
+
+
+def test_explain_more_hidden_without_claude(p):
+    b, pg, errors = open_page(p, state(cards=only_new("dict-2")))
+    pg.click("#go")
+    pg.locator(".opt").first.click()
+    pg.wait_for_timeout(200)
+    assert pg.locator("#more").count() == 0
+    assert not errors, errors
+    b.close()
+
+
 def test_no_runtime_network_and_no_new_css_functions(p):
     html = PAGE.read_text(encoding="utf-8")
     assert "fonts.googleapis" not in html
@@ -116,7 +153,7 @@ if __name__ == "__main__":
             try:
                 t(p)
                 print(f"ok   {t.__name__}")
-            except AssertionError as e:
+            except Exception as e:  # assertion or Playwright timeout
                 failed += 1
                 print(f"FAIL {t.__name__}: {e}")
     print(f"{len(tests) - failed}/{len(tests)} passed")

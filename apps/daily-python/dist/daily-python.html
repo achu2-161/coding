@@ -62,6 +62,8 @@ pre.code{margin:0 0 14px;background:var(--code);color:var(--codeink);border-radi
 .fb{border-radius:12px;padding:12px 14px;margin-top:14px}
 .fb.ok{background:var(--okbg)}.fb.bad{background:var(--badbg)}
 .fb b{display:block;margin-bottom:4px}
+.more{white-space:pre-wrap;margin-top:10px;padding:12px 14px;border-radius:12px;background:var(--panel)}
+.more:empty{display:none}
 textarea{width:100%;min-height:120px;font:13px/1.4 var(--mono);border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel);color:var(--ink)}
 .stack{display:grid;gap:10px}
 .done{text-align:center;padding:18px 0}
@@ -178,6 +180,34 @@ textarea{width:100%;min-height:120px;font:13px/1.4 var(--mono);border:1px solid 
     return missed > state.freezes ? 0 : state.streak;
   }
 
+  // Prompt for the "Explain more" button. Claude has no memory, so send everything.
+  function explainPrompt(q, picked, correct) {
+    const right = q.type === 'mcq' || q.type === 'predict' ? q.options[q.answer]
+      : q.type === 'bug' ? `line ${q.bugLine + 1} should be: ${q.fixes[q.answer].trim()}`
+      : q.type === 'blank' ? q.chips[q.answer]
+      : q.lines.join('\n');
+    return [
+      'You are a friendly Python tutor. The learner is a PhD student in building science and LCA,',
+      'a Python beginner who knows some C from CS50. They are on their phone doing a quick daily quiz.',
+      `They just answered this ${q.type} question and got it ${correct ? 'right' : 'wrong'}.`,
+      '',
+      `Question: ${q.prompt}`,
+      q.code ? `Code:\n${q.code}` : '',
+      q.options ? `Options: ${q.options.join(' | ')}` : '',
+      q.chips ? `Choices for the blank: ${q.chips.join(' | ')}` : '',
+      q.fixes ? `Fix options: ${q.fixes.join(' | ')}` : '',
+      `They picked: ${picked}`,
+      `Correct answer: ${right}`,
+      `Short explanation already shown: ${q.explain}`,
+      '',
+      'Explain it more deeply than the short explanation, in under 150 words, plain text (no markdown headings or tables).',
+      correct ? 'Confirm why it is right and add one thing worth knowing next.'
+        : 'Explain why their pick was wrong and why the correct answer is right.',
+      'Step through what Python does line by line where it helps. Use a tiny building-science or LCA example if it helps.',
+      'Use Australian English. Say "embodied GHG emissions", never "embodied carbon" or "carbon emissions".',
+    ].filter(Boolean).join('\n');
+  }
+
   // ---- backup ----
   function exportState(state) { return JSON.stringify(state); }
   function importState(json) {
@@ -189,7 +219,7 @@ textarea{width:100%;min-height:120px;font:13px/1.4 var(--mono);border:1px solid 
     return s;
   }
 
-  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, displayStreak, exportState, importState };
+  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, displayStreak, explainPrompt, exportState, importState };
 });
 
 </script>
@@ -211,12 +241,13 @@ textarea{width:100%;min-height:120px;font:13px/1.4 var(--mono);border:1px solid 
   const TOPICS = {
     variables: 'Variables & types', operators: 'Operators', conditionals: 'Conditionals',
     'lists-loops': 'Lists & loops', zip: 'zip()', dicts: 'Dictionaries', tuples: 'Tuples',
-    functions: 'Functions', fstrings: 'f-strings', terminology: 'Terminology', lca: 'LCA & building science',
+    functions: 'Functions', fstrings: 'f-strings',
   };
 
-  // Topics Adrian has started (🟡 or ✅ in knowledge-base/skills.md).
+  // Coding topics Adrian has started (🟡 or ✅ in knowledge-base/skills.md).
+  // Coding questions only: no PhD/LCA content quizzes (Adrian, 2026-11-26).
   const UNLOCKED = ['variables', 'operators', 'conditionals', 'lists-loops', 'zip', 'dicts',
-    'tuples', 'functions', 'fstrings', 'terminology', 'lca'];
+    'tuples', 'functions', 'fstrings'];
 
   const P = 'What does this print?';
 
@@ -470,40 +501,11 @@ textarea{width:100%;min-height:120px;font:13px/1.4 var(--mono);border:1px solid 
       options: ['24%', '0.24%', '23.7%', '0%'], answer: 0,
       explain: '% multiplies by 100 and adds a percent sign. .0 means no decimals.' },
 
-    // ---------- terminology ----------
-    { id: 'term-1', topic: 'terminology', type: 'mcq', prompt: 'Which term does this project use?',
-      options: ['embodied GHG emissions', 'embodied carbon', 'carbon emissions', 'carbon-intensive'], answer: 0,
-      explain: 'Carbon itself isn\'t the problem; greenhouse gases are. So: embodied greenhouse gas (GHG) emissions.' },
-    { id: 'term-2', topic: 'terminology', type: 'mcq', prompt: 'A 6-storey apartment block is…',
-      options: ['medium-rise', 'low-rise', 'high-rise', 'super high-rise'], answer: 0,
-      explain: 'ABS/NSW definitions: low-rise 1–3, medium-rise 4–8, high-rise 9–19, super high-rise 20+.' },
-    { id: 'term-3', topic: 'terminology', type: 'mcq', prompt: 'Which phrasing matches the project conventions?',
-      options: ['Households use energy for heating', 'Households consume carbon for heating', 'Households are carbon-intensive heaters', 'Households emit carbon via heating'], answer: 0,
-      explain: 'Talk about energy use, using energy and users of energy.' },
-
-    // ---------- LCA & building science ----------
-    { id: 'lca-1', topic: 'lca', type: 'mcq', prompt: 'In EN 15978, stages A1–A3 are the…',
-      options: ['Product stage (raw materials, transport, manufacturing)', 'Use stage', 'End-of-life stage', 'Benefits beyond the system boundary'], answer: 0,
-      explain: 'A1 raw material supply, A2 transport to the factory, A3 manufacturing.' },
-    { id: 'lca-2', topic: 'lca', type: 'mcq', prompt: 'Module B6 covers…',
-      options: ['Operational energy use', 'Maintenance', 'Demolition', 'Transport to site'], answer: 0,
-      explain: 'B6 is operational energy use, which is where operational GHG emissions come from. B7 is operational water use.' },
-    { id: 'lca-3', topic: 'lca', type: 'mcq', prompt: 'Lower U-value means…',
-      options: ['Less heat flows through: better insulation', 'More heat flows through', 'Higher thermal mass', 'Higher embodied GHG emissions'], answer: 0,
-      explain: 'U-value (W/m²K) is the heat flow per square metre for each degree of temperature difference. Lower is better insulating.' },
-    { id: 'lca-4', topic: 'lca', type: 'mcq', prompt: 'What does an EPD provide?',
-      options: ['Verified life-cycle impacts of a product', 'A building\'s energy rating', 'A thermal comfort survey', 'A planning permit'], answer: 0,
-      explain: 'An Environmental Product Declaration reports a product\'s LCA results, usually per declared unit.' },
-    { id: 'lca-5', topic: 'lca', type: 'mcq', prompt: 'C1–C4 modules cover…',
-      options: ['End of life', 'Construction', 'Use', 'Product manufacture'], answer: 0,
-      explain: 'C1 deconstruction, C2 transport, C3 waste processing, C4 disposal.' },
-    { id: 'lca-6', topic: 'lca', type: 'predict', prompt: 'Heat loss through a wall (Q = U × A × ΔT). What does this print?',
+    // ---------- applied arithmetic ----------
+    { id: 'lca-6', topic: 'operators', type: 'predict', prompt: 'Heat loss through a wall (Q = U × A × ΔT). What does this print?',
       code: 'u = 0.5\narea = 20\ndelta_t = 15\nprint(u * area * delta_t)',
       options: ['150.0', '35.5', '150', '0.5'], answer: 0,
       explain: '0.5 W/m²K × 20 m² × 15 K = 150 W. The float u makes the result a float.' },
-    { id: 'lca-7', topic: 'lca', type: 'mcq', prompt: 'In your thermal simulator, how many hourly steps are in a year?',
-      options: ['8,760', '365', '525,600', '8,784 every year'], answer: 0,
-      explain: '365 × 24 = 8,760 hours, the length of a standard EPW weather file.' },
   ];
 
   return { TOPICS, UNLOCKED, QUESTIONS };
@@ -527,7 +529,11 @@ function save() { try { localStorage.setItem(KEY, E.exportState(state)); } catch
 const today = () => E.localDay(new Date());
 
 let run = null;
-let wallObserver = null; // {ids, i, results[], counts, answered}
+let wallObserver = null;
+let askClaude = null; // set when this page may ask Claude
+try {
+  if (window.claude && window.claude.use) window.claude.use('sample').then(s => { askClaude = s; }).catch(() => {});
+} catch (e) {} // {ids, i, results[], counts, answered}
 
 // ---------- home ----------
 function wallSVG(w, h) {
@@ -643,7 +649,7 @@ function wire(q) {
       const pick = +b.dataset.o, ok = pick === q.answer;
       app.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.o === q.answer) x.classList.add('right'); });
       if (!ok) b.classList.add('wrong');
-      answer(q, ok);
+      answer(q, ok, q.options[pick]);
     });
   } else if (q.type === 'bug') {
     app.querySelectorAll('#pre .ln').forEach(b => b.onclick = () => {
@@ -654,7 +660,7 @@ function wire(q) {
         b.classList.add('wrong');
         app.querySelector(`#pre .ln[data-k="${q.bugLine}"]`).classList.add('right');
         document.getElementById('hint').textContent = `The bug was on line ${q.bugLine + 1}. Fix: ${q.fixes[q.answer].trim()}`;
-        return answer(q, false);
+        return answer(q, false, `line ${k + 1}: ${q.code.split('\n')[k].trim()}`);
       }
       document.getElementById('hint').textContent = 'Step 2: pick the fix for that line.';
       const order = shuffled(q.fixes.length);
@@ -665,7 +671,7 @@ function wire(q) {
         fx.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.o === q.answer) x.classList.add('right'); });
         if (!ok) f.classList.add('wrong');
         b.classList.add(ok ? 'right' : 'wrong');
-        answer(q, ok);
+        answer(q, ok, `line ${k + 1}, fix: ${q.fixes[+f.dataset.o].trim()}`);
       });
     });
   } else if (q.type === 'blank') {
@@ -675,7 +681,7 @@ function wire(q) {
       slot.textContent = q.chips[q.answer];
       app.querySelectorAll('.chip').forEach(x => { x.disabled = true; if (+x.dataset.o === q.answer) x.classList.add('used'); });
       if (!ok) { c.style.borderColor = 'var(--bad)'; }
-      answer(q, ok);
+      answer(q, ok, q.chips[pick]);
     });
   } else if (q.type === 'order') {
     const built = document.getElementById('built'), pile = document.getElementById('pile');
@@ -692,7 +698,7 @@ function wire(q) {
         built.querySelectorAll('.chip').forEach((c, k) => { c.disabled = true; c.style.borderColor = q.lines[run.built[k]] === q.lines[ref[k]] ? 'var(--ok)' : 'var(--bad)'; });
         pile.querySelectorAll('.chip').forEach(c => c.disabled = true);
         if (!ok) built.insertAdjacentHTML('afterend', `<p class="muted">Correct order:</p><pre class="code">${codeLines(q.lines.join('\n'))}</pre>`);
-        answer(q, ok);
+        answer(q, ok, run.built.map(o => q.lines[o]).join('\n'));
       };
     };
     pile.querySelectorAll('.chip').forEach(c => c.onclick = () => {
@@ -703,11 +709,14 @@ function wire(q) {
   }
 }
 
-function answer(q, ok) {
+function answer(q, ok, picked) {
   E.recordAnswer(state, q.id, ok, run.day);
   save();
   run.results.push(ok);
-  document.getElementById('fb').innerHTML = `<div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Correct ✓' : 'Not quite'}</b>${esc(q.explain)}</div>`;
+  document.getElementById('fb').innerHTML = `<div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Correct ✓' : 'Not quite'}</b>${esc(q.explain)}</div>` +
+    (askClaude ? `<button class="btn ghost" id="more" style="margin-top:10px">Explain more (asks Claude)</button><div class="more" aria-live="polite"></div>` : '');
+  const more = document.getElementById('more');
+  if (more) more.onclick = () => explainMore(q, picked, ok, more);
   const last = run.i === run.ids.length - 1;
   document.getElementById('bar').innerHTML = `<button class="btn" id="next">${last ? 'Finish' : 'Next'}</button>`;
   document.getElementById('next').onclick = () => { if (last) finish(); else { run.i++; question(); } };
@@ -729,6 +738,21 @@ function finish() {
     <div class="bar"><button class="btn" id="home">Back to the wall</button></div>`;
   document.getElementById('home').onclick = home;
   run = null;
+}
+
+// ---------- Explain more (Claude) ----------
+async function explainMore(q, picked, ok, btn) {
+  const box = btn.nextElementSibling;
+  btn.disabled = true;
+  box.textContent = 'Thinking…';
+  try {
+    const res = await askClaude(E.explainPrompt(q, picked, ok), { onText: ({ text }) => { box.textContent = text; } });
+    box.textContent = res.text;
+    btn.remove();
+  } catch (e) {
+    if (e && e.code === 'not_granted') { askClaude = null; btn.remove(); box.textContent = 'Claude isn\'t available on this page.'; }
+    else { btn.disabled = false; box.textContent = e && e.code === 'rate_limited' ? 'Claude is busy. Try again in a minute.' : 'Couldn\'t reach Claude. Try again.'; }
+  }
 }
 
 // ---------- settings ----------
