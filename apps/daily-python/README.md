@@ -29,4 +29,4 @@ Five tap-based questions a day on your phone. Each day you finish adds a layer t
    python3 -I apps/daily-python/build.py
    python3 apps/daily-python/tests/ui_test.py
    ```
-4. Republish `dist/daily-python.html` to the existing "Daily Python" artifact. Progress on the phone is kept.
+4. Republish `dist/daily-python.html` to the existing "Daily Python" artifact (id `6ca6d743-656b-459a-aec1-b5ecf4fc08d1`). Progress on the phone is kept.
