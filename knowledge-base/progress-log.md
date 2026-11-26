@@ -4,6 +4,21 @@ Newest first. Each entry has the date, the chat it came from, what was done, and
 
 ---
 
+## 2026-11-26 · CS50 / C-to-Python coaching
+- Asked for an honest review of my CS50x submissions (copied into github.com/achu2-161/cs50, 69 branches). Said I don't fully remember or understand how many of them were solved, so finished assignments aren't a guide to my level.
+- Said weeks on pointers and memory management felt like a lot of effort for little practical use afterwards.
+- Want Claude to coach me through CS50 problem sets for learning only (no resubmitting).
+- Asked about a side-by-side environment where Claude can see my code live.
+- Asked how the CS50 starter code works (headers, libraries, where things live). Explained: .h = promise, .c = implementation, quotes vs <> in #include, make = shortcut for a clang command. Python equivalent is import.
+- Asked how GitHub branching organises work, whether phd-context is structured well, and how to group repos by theme. Learned: topics are global, Lists are personal, custom properties are organisation-only.
+- Made this repo private.
+- **Next up (suggestions):**
+  - Finish `compare_materials` first (curriculum says pick up here).
+  - Then try the modules exercise: `ghg_factors.py` imported by `main.py`. Predict the output, and what happens if `main.py` moves to another folder.
+  - Optional CS50 coaching track: Runoff in Python as the first problem set.
+
+---
+
 ## 2026-11-26 · Project manager
 - Set up this repo as the shared knowledge base: profile, goals, skills, curriculum, projects, conventions and the chat registry.
 - Backfilled from earlier chats (entries below are reconstructed and approximate).
