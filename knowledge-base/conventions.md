@@ -14,6 +14,14 @@
 - Give simple step-by-step guidance for technical work.
 - I build iteratively: get a working version first, then refine it over versions.
 
+## CS50x: my views and fit for my learning
+- **What I liked:** it goes into a lot of detail on how computing works, and C being the "grandaddy" of many modern languages. It helps me appreciate how sophisticated Python's memory management is.
+- **What I didn't:** I spent weeks on memory management and pointers, gave up on them a few times because they were so convoluted, and they aren't used much afterwards. It felt like a lot of effort for the satisfaction of a green tick.
+- **Starter code:** the distribution code (templates linking to other files and libraries) was obscure. I couldn't see what it did or where it lived, and I think I overthought a lot of it.
+- **Learning online:** when stuck, there's no office hours. The community is supportive, but people tend to give answers with weaker explanations.
+- **What I want from it now:** understanding over completion. I'm not resubmitting, so I'd like Claude to coach me through problem sets for learning only. Old submissions don't show my real level (see `skills.md`).
+- **My goal is Python for LCA data analysis, visualisation and small apps.** Treat CS50 as optional background, and take what helps that, not the course for its own sake.
+
 ## How I like to build
 - Single-file HTML apps (embedded assets, localStorage for persistence) work well for my tools.
 - Send updated files straight away after an edit, without being asked.
