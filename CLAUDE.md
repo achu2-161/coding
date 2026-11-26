@@ -20,6 +20,10 @@ This repo is Adrian's shared knowledge base for his coding projects. Several Cla
 - Keep entries short, and record only what Adrian did or decided. Your own suggestions belong in "Next up", labelled as suggestions.
 - Commit with a clear message, for example `log: Phase 1 lesson 3 – loops and zip()`.
 
+## Git workflow
+- When Adrian asks you to update the repo, **commit and push straight to `main`**. Don't use branches or pull requests.
+- Update only when Adrian asks, or at the end-of-session points above.
+
 ## Who owns what
 - **Project manager chat**: owns `goals.md`, `curriculum.md` and `chats.md`, and keeps the whole knowledge base tidy.
 - **Python tutor chat**: owns `skills.md` and the lesson entries in `progress-log.md`.
