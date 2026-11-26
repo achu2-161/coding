@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday learning: warm, tactile, calm
+   IDEA a rammed-earth wall built one compacted layer per day of practice
+   PICTURE the wall section: last 28 days as strata, today's layer on top, streak carved in
+   COLOUR white ground, earth ochres for layers, charcoal ink, hemp-lime accent for correct, clay red for wrong
+   TYPE Archivo 800 display + Inter text, JetBrains Mono for code
+   LAYOUT one column at phone width: wall, figures, start button; questions fill the screen with a sticky action bar */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#16130f);--ink:light-dark(#1d1a16,#f1ebe2);--soft:light-dark(#6d655a,#b3a998);--line:light-dark(#e6dfd4,#3a332a);--panel:light-dark(#f6f2eb,#221d17);--earth1:#c9874e;--earth2:#b46f3c;--earth3:#d9a46b;--earth4:#9c5a30;--ok:light-dark(#3f7d1f,#b7e06a);--okbg:light-dark(#eef7dc,#26341a);--bad:light-dark(#b23a1c,#ff8a66);--badbg:light-dark(#fbe7df,#3a1f17);--ice:light-dark(#d7e7ef,#2c3c45);--code:light-dark(#2a2520,#0f0d0a);--codeink:#f3ecdf}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+main{max-width:560px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+h1,h2{font-family:Archivo,system-ui,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:0}
+h1{font-size:34px}h2{font-size:24px}
+.muted{color:var(--soft);font-size:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.icon{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px;cursor:pointer}
+.wall{position:relative;height:clamp(220px,42svh,340px);border-radius:16px;overflow:hidden;background:var(--panel)}
+.wall svg{position:absolute;inset:0;width:100%;height:100%}
+.carve{position:absolute;left:12px;top:12px;color:var(--ink);background:color-mix(in srgb,var(--bg) 82%,transparent);border-radius:12px;padding:8px 14px 10px}
+.carve b{display:block;font:800 clamp(56px,16vw,84px)/1 Archivo,sans-serif;letter-spacing:-.03em}
+.carve span{font-weight:600}
+.figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.fig{background:var(--panel);border-radius:12px;padding:10px 12px}
+.fig b{display:block;font:800 26px/1.1 Archivo,sans-serif}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:4px 0 16px}
+.cal i{aspect-ratio:1;border-radius:5px;background:var(--line);display:block}
+.cal i.on{background:var(--earth2)}.cal i.today{outline:2px solid var(--ink);outline-offset:1px}.cal i.blank{background:none}
+.cal em{font-style:normal;font-size:12px;color:var(--soft);text-align:center}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:14px;background:var(--ink);color:var(--bg);font:600 17px Inter,sans-serif;cursor:pointer;padding:12px 16px}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn:focus-visible,.opt:focus-visible,.icon:focus-visible,.ln:focus-visible,.chip:focus-visible{outline:3px solid var(--earth2);outline-offset:2px}
+.bar.home{position:static;background:none}
+.bar{position:sticky;bottom:0;padding-top:12px;margin-top:auto;background:linear-gradient(transparent,var(--bg) 30%);display:grid;gap:8px}
+.prog{display:flex;gap:6px;margin-bottom:16px}.prog i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.prog i.ok{background:var(--ok)}.prog i.bad{background:var(--bad)}.prog i.cur{background:var(--earth2)}
+.tag{display:inline-block;font-size:13px;color:var(--soft);margin-bottom:6px}
+.q{font:600 19px/1.35 Inter,sans-serif;margin:0 0 12px}
+pre.code{margin:0 0 14px;background:var(--code);color:var(--codeink);border-radius:12px;padding:12px 0;overflow-x:auto;font:14px/1.6 "JetBrains Mono",ui-monospace,monospace}
+.ln{display:block;width:100%;text-align:left;border:0;background:none;color:inherit;font:inherit;padding:2px 14px;white-space:pre;min-height:30px;cursor:default}
+.ln.tap{cursor:pointer}.ln.tap:hover{background:rgba(255,255,255,.07)}
+.ln.hit{background:rgba(201,135,78,.35)}.ln.right{background:rgba(183,224,106,.25)}.ln.wrong{background:rgba(255,138,102,.3)}
+.slot{display:inline-block;min-width:3ch;border-bottom:2px solid var(--earth3);color:var(--earth3)}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:16px/1.4 Inter,sans-serif;padding:10px 14px;cursor:pointer;white-space:pre-wrap}
+.opt.mono,.chip{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:15px}
+.opt.right{border-color:var(--ok);background:var(--okbg)}.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{max-width:100%;overflow-x:auto;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:8px 12px;cursor:pointer;white-space:pre;text-align:left}
+.chip.used{opacity:.3}
+.built{min-height:60px;border:2px dashed var(--line);border-radius:12px;padding:8px;margin-bottom:10px;display:grid;gap:6px}
+.built .chip{width:100%;overflow-x:auto}
+.fb{border-radius:12px;padding:12px 14px;margin-top:14px}
+.fb.ok{background:var(--okbg)}.fb.bad{background:var(--badbg)}
+.fb b{display:block;margin-bottom:4px}
+textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel);color:var(--ink)}
+.stack{display:grid;gap:10px}
+.done{text-align:center;padding:18px 0}
+.done b{font:800 64px/1 Archivo,sans-serif;display:block}
+@media(prefers-reduced-motion:no-preference){.layer-new{animation:tamp .7s ease-out}@keyframes tamp{from{transform:translateY(-30px);opacity:0}to{transform:none;opacity:1}}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+// Daily Python engine: spaced repetition (Leitner), streaks with freezes, backup.
+// Pure logic, no DOM. Works in Node (module.exports) and the browser (window.Engine).
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.Engine = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  const SESSION_SIZE = 5;
+  const REVIEW_SLOTS = 3;
+  const INTERVALS = [0, 1, 2, 4, 8, 16]; // days, indexed by box 1–5
+  const MAX_BOX = 5;
+  const START_FREEZES = 2;
+  const MAX_FREEZES = 3;
+  const FREEZE_EVERY = 7;
+
+  // ---- dates (local calendar days as 'YYYY-MM-DD') ----
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function localDay(date) {
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  }
+  function toUTC(day) {
+    const [y, m, d] = day.split('-').map(Number);
+    return Date.UTC(y, m - 1, d);
+  }
+  function addDays(day, n) {
+    const t = new Date(toUTC(day) + n * 86400000);
+    return `${t.getUTCFullYear()}-${pad(t.getUTCMonth() + 1)}-${pad(t.getUTCDate())}`;
+  }
+  function daysBetween(a, b) { return Math.round((toUTC(b) - toUTC(a)) / 86400000); }
+
+  // ---- state ----
+  function newState() {
+    return { v: 1, cards: {}, days: [], streak: 0, best: 0, freezes: START_FREEZES, lastDay: null };
+  }
+
+  function shuffle(arr, rng) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // ---- scheduling ----
+  function pickSession(state, questions, unlocked, today, rng = Math.random) {
+    const open = questions.filter(q => unlocked.includes(q.topic));
+    const due = open
+      .filter(q => state.cards[q.id] && state.cards[q.id].due <= today)
+      .sort((a, b) => (state.cards[a.id].due < state.cards[b.id].due ? -1 : state.cards[a.id].due > state.cards[b.id].due ? 1 : 0))
+      .map(q => q.id);
+    const fresh = shuffle(open.filter(q => !state.cards[q.id]).map(q => q.id), rng);
+
+    let reviews = due.length >= SESSION_SIZE ? due.slice(0, SESSION_SIZE) : due.slice(0, REVIEW_SLOTS);
+    let picked = reviews.concat(fresh.slice(0, SESSION_SIZE - reviews.length));
+    // Top up from whichever pool still has questions.
+    if (picked.length < SESSION_SIZE) {
+      const extra = due.filter(id => !picked.includes(id));
+      picked = picked.concat(extra.slice(0, SESSION_SIZE - picked.length));
+    }
+    return picked;
+  }
+
+  function recordAnswer(state, id, correct, today) {
+    const card = state.cards[id] || { box: 1, due: today };
+    card.box = correct ? Math.min(card.box + 1, MAX_BOX) : 1;
+    card.due = addDays(today, INTERVALS[card.box]);
+    state.cards[id] = card;
+  }
+
+  // ---- streaks ----
+  function completeDay(state, today) {
+    if (state.lastDay === today) {
+      return { streak: state.streak, freezesUsed: 0, freezeEarned: false, alreadyDone: true };
+    }
+    let freezesUsed = 0;
+    if (state.lastDay === null) {
+      state.streak = 1;
+    } else {
+      const missed = daysBetween(state.lastDay, today) - 1;
+      if (missed <= 0) state.streak += 1;
+      else if (missed <= state.freezes) {
+        state.freezes -= missed;
+        freezesUsed = missed;
+        state.streak += 1;
+      } else state.streak = 1;
+    }
+    let freezeEarned = false;
+    if (state.streak % FREEZE_EVERY === 0 && state.freezes < MAX_FREEZES) {
+      state.freezes += 1;
+      freezeEarned = true;
+    }
+    state.best = Math.max(state.best, state.streak);
+    state.lastDay = today;
+    state.days.push(today);
+    return { streak: state.streak, freezesUsed, freezeEarned, alreadyDone: false };
+  }
+
+  // ---- backup ----
+  function exportState(state) { return JSON.stringify(state); }
+  function importState(json) {
+    const s = JSON.parse(json); // throws on junk
+    const ok = s && s.v === 1 && typeof s.cards === 'object' && s.cards !== null &&
+      Array.isArray(s.days) && Number.isInteger(s.streak) && Number.isInteger(s.best) &&
+      Number.isInteger(s.freezes) && (s.lastDay === null || typeof s.lastDay === 'string');
+    if (!ok) throw new Error('This does not look like a Daily Python backup.');
+    return s;
+  }
+
+  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, exportState, importState };
+});
+
+</script>
+<script>
+// Daily Python question bank.
+// Tutor chat: add questions here as new topics open up, add the topic to UNLOCKED,
+// then run:  python3 -I apps/daily-python/verify_questions.py
+//
+// Types:
+//   mcq     options[], answer (index)
+//   predict code, options[], answer (index)  – options[answer] must equal what Python prints
+//   bug     code, bugLine (0-based), fixes[], answer (index), expect
+//   blank   code with one ___, chips[], answer (index), expect
+//   order   lines[] in the correct order, expect
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.Bank = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  const TOPICS = {
+    variables: 'Variables & types', operators: 'Operators', conditionals: 'Conditionals',
+    'lists-loops': 'Lists & loops', zip: 'zip()', dicts: 'Dictionaries', tuples: 'Tuples',
+    functions: 'Functions', fstrings: 'f-strings', terminology: 'Terminology', lca: 'LCA & building science',
+  };
+
+  // Topics Adrian has started (🟡 or ✅ in knowledge-base/skills.md).
+  const UNLOCKED = ['variables', 'operators', 'conditionals', 'lists-loops', 'zip', 'dicts',
+    'tuples', 'functions', 'fstrings', 'terminology', 'lca'];
+
+  const P = 'What does this print?';
+
+  const QUESTIONS = [
+    // ---------- variables & types ----------
+    { id: 'var-1', topic: 'variables', type: 'predict', prompt: P,
+      code: 'wall_area = 24\nwall_area = wall_area + 6\nprint(wall_area)',
+      options: ['30', '24', '6', '246'], answer: 0,
+      explain: 'The right-hand side is worked out first (24 + 6), then stored back in wall_area.' },
+    { id: 'var-2', topic: 'variables', type: 'predict', prompt: P,
+      code: 'u_value = 0.35\nprint(type(u_value).__name__)',
+      options: ['float', 'int', 'str', 'decimal'], answer: 0,
+      explain: 'Any number with a decimal point is a float.' },
+    { id: 'var-3', topic: 'variables', type: 'predict', prompt: P,
+      code: 'storeys = "3"\nprint(storeys * 2)',
+      options: ['33', '6', 'TypeError', '"3""3"'], answer: 0,
+      explain: '"3" is a string. Multiplying a string by 2 repeats it, so you get "33", not 6.' },
+    { id: 'var-4', topic: 'variables', type: 'bug', prompt: 'Find the bug: this should print 6.',
+      code: 'storeys = "3"\nprint(storeys * 2)',
+      bugLine: 0, fixes: ['storeys = 3', 'storeys = "3" * 2', 'storeys = str(3)'], answer: 0,
+      expect: '6',
+      explain: 'Storing 3 as a number (int) makes * do arithmetic instead of repeating text.' },
+    { id: 'var-5', topic: 'variables', type: 'predict', prompt: P,
+      code: 'mass_kg = int("1200")\nprint(mass_kg + 300)',
+      options: ['1500', '1200300', 'TypeError', '1200'], answer: 0,
+      explain: 'int() converts the text "1200" into the number 1200, so + adds.' },
+    { id: 'var-6', topic: 'variables', type: 'mcq', prompt: 'Which is the best variable name for a wall U-value?',
+      options: ['u_value_w_m2k', 'UValue!', '2nd_u_value', 'u value'], answer: 0,
+      explain: 'Names can\'t start with a digit or contain spaces or "!". Lowercase with underscores, plus the units, is the Python convention.' },
+
+    // ---------- operators ----------
+    { id: 'op-1', topic: 'operators', type: 'predict', prompt: P,
+      code: 'print(7 / 2)',
+      options: ['3.5', '3', '4', '3.0'], answer: 0,
+      explain: '/ always gives a float in Python 3, even when it divides evenly.' },
+    { id: 'op-2', topic: 'operators', type: 'predict', prompt: P,
+      code: 'panels = 17 // 4\nprint(panels)',
+      options: ['4', '4.25', '1', '5'], answer: 0,
+      explain: '// is floor division: how many whole 4s fit into 17.' },
+    { id: 'op-3', topic: 'operators', type: 'predict', prompt: P,
+      code: 'offcut = 17 % 4\nprint(offcut)',
+      options: ['1', '4', '0.25', '13'], answer: 0,
+      explain: '% gives the remainder: 17 = 4 × 4 + 1.' },
+    { id: 'op-4', topic: 'operators', type: 'predict', prompt: P,
+      code: 'print(2 + 3 * 4)',
+      options: ['14', '20', '24', '9'], answer: 0,
+      explain: 'Multiplication happens before addition: 3 × 4 = 12, then + 2.' },
+    { id: 'op-5', topic: 'operators', type: 'blank', prompt: 'Fill the blank so it prints the R-value 2.5.',
+      code: 'u_value = 0.4\nr_value = 1 ___ u_value\nprint(r_value)',
+      chips: ['/', '*', '-', '//'], answer: 0, expect: '2.5',
+      explain: 'R-value is the inverse of U-value: R = 1 / U.' },
+    { id: 'op-6', topic: 'operators', type: 'predict', prompt: P,
+      code: 'print(2 ** 3)',
+      options: ['8', '6', '9', '5'], answer: 0,
+      explain: '** is "to the power of": 2 × 2 × 2.' },
+
+    // ---------- conditionals ----------
+    { id: 'if-1', topic: 'conditionals', type: 'predict', prompt: P,
+      code: 'storeys = 5\nif storeys <= 3:\n    print("low-rise")\nelif storeys <= 8:\n    print("medium-rise")\nelse:\n    print("high-rise")',
+      options: ['medium-rise', 'low-rise', 'high-rise', 'low-rise medium-rise'], answer: 0,
+      explain: 'Python checks top to bottom and runs only the first branch that is True. 5 ≤ 8 → medium-rise.' },
+    { id: 'if-2', topic: 'conditionals', type: 'predict', prompt: P,
+      code: 'u = 0.3\nif u < 0.25:\n    print("excellent")\nelif u < 0.5:\n    print("good")\nelif u < 1.0:\n    print("fair")',
+      options: ['good', 'excellent', 'fair', 'good fair'], answer: 0,
+      explain: 'Once one branch runs, the later elifs are skipped, even if they would also be True.' },
+    { id: 'if-3', topic: 'conditionals', type: 'bug', prompt: 'Find the bug.',
+      code: 'u = 0.3\nif u = 0.3:\n    print("matches")',
+      bugLine: 1, fixes: ['if u == 0.3:', 'if u := 0.3', 'if (u = 0.3):'], answer: 0,
+      expect: 'matches',
+      explain: '= stores a value; == compares. Inside an if you almost always want ==.' },
+    { id: 'if-4', topic: 'conditionals', type: 'bug', prompt: 'Find the bug.',
+      code: 'storeys = 2\nif storeys <= 3\n    print("low-rise")',
+      bugLine: 1, fixes: ['if storeys <= 3:', 'if storeys <= 3;', 'if (storeys <= 3)'], answer: 0,
+      expect: 'low-rise',
+      explain: 'Every if, elif, else, for and def line ends with a colon.' },
+    { id: 'if-5', topic: 'conditionals', type: 'predict', prompt: P,
+      code: 'bio_based = True\nlocal = False\nprint(bio_based and local)',
+      options: ['False', 'True', 'None', 'TrueFalse'], answer: 0,
+      explain: 'and is only True when both sides are True.' },
+    { id: 'if-6', topic: 'conditionals', type: 'blank', prompt: 'Fill the blank so it prints "check".',
+      code: 'ghg = 120\nlimit = 100\nif ghg ___ limit:\n    print("check")\nelse:\n    print("ok")',
+      chips: ['>', '<', '==', '<='], answer: 0, expect: 'check',
+      explain: '120 is greater than 100, so > is True and the first branch runs.' },
+
+    // ---------- lists & loops ----------
+    { id: 'list-1', topic: 'lists-loops', type: 'predict', prompt: P,
+      code: 'materials = ["timber", "hempcrete", "rammed earth"]\nprint(materials[1])',
+      options: ['hempcrete', 'timber', 'rammed earth', 'IndexError'], answer: 0,
+      explain: 'Indexing starts at 0, so [1] is the second item.' },
+    { id: 'list-2', topic: 'lists-loops', type: 'predict', prompt: P,
+      code: 'materials = ["timber", "hempcrete", "rammed earth"]\nprint(materials[-1])',
+      options: ['rammed earth', 'timber', 'hempcrete', 'IndexError'], answer: 0,
+      explain: 'Negative indexes count from the end: [-1] is the last item.' },
+    { id: 'list-3', topic: 'lists-loops', type: 'predict', prompt: P,
+      code: 'materials = ["timber", "straw"]\nprint(materials[2])',
+      options: ['IndexError', 'straw', 'None', 'timber'], answer: 0,
+      explain: 'A two-item list only has indexes 0 and 1. Asking for [2] raises IndexError.' },
+    { id: 'list-4', topic: 'lists-loops', type: 'predict', prompt: P,
+      code: 'ghg = [120, 45, 80]\ntotal = 0\nfor g in ghg:\n    total += g\nprint(total)',
+      options: ['245', '80', '120', '3'], answer: 0,
+      explain: 'The loop adds each value to the running total: 120 + 45 + 80.' },
+    { id: 'list-5', topic: 'lists-loops', type: 'predict', prompt: P,
+      code: 'layers = ["plaster"]\nlayers.append("hemp")\nprint(len(layers))',
+      options: ['2', '1', '6', 'hemp'], answer: 0,
+      explain: '.append() adds one item to the end of the list, so it now has 2 items.' },
+    { id: 'list-6', topic: 'lists-loops', type: 'order', prompt: 'Put the lines in order to print the total 245.',
+      lines: ['ghg = [120, 45, 80]', 'total = 0', 'for g in ghg:', '    total = total + g', 'print(total)'],
+      expect: '245',
+      explain: 'Set up the data and the total, loop to add, then print after the loop (not indented).' },
+    { id: 'list-7', topic: 'lists-loops', type: 'bug', prompt: 'Find the bug: this should print 245 once.',
+      code: 'ghg = [120, 45, 80]\ntotal = 0\nfor g in ghg:\n    total = total + g\n    print(total)',
+      bugLine: 4, fixes: ['print(total)', '    print(g)', '    print(ghg)'], answer: 0,
+      expect: '245',
+      explain: 'Indenting print puts it inside the loop, so it prints three times. Unindent it to print once, at the end.' },
+    { id: 'list-8', topic: 'lists-loops', type: 'predict', prompt: P,
+      code: 'for stage in range(3):\n    print(stage, end=" ")',
+      options: ['0 1 2', '1 2 3', '0 1 2 3', '3'], answer: 0,
+      explain: 'range(3) gives 0, 1, 2 and stops before 3.' },
+    { id: 'list-9', topic: 'lists-loops', type: 'blank', prompt: 'Fill the blank so it prints 3.',
+      code: 'materials = ["timber", "straw", "clay"]\nprint(___(materials))',
+      chips: ['len', 'sum', 'max', 'count'], answer: 0, expect: '3',
+      explain: 'len() returns how many items are in a list.' },
+
+    // ---------- zip ----------
+    { id: 'zip-1', topic: 'zip', type: 'predict', prompt: P,
+      code: 'materials = ["timber", "steel"]\nkg = [500, 200]\nfor m, q in zip(materials, kg):\n    print(m, q)',
+      options: ['timber 500\nsteel 200', 'timber steel\n500 200', 'timber 200\nsteel 500', "('timber', 500)"], answer: 0,
+      explain: 'zip pairs items by position: first with first, second with second.' },
+    { id: 'zip-2', topic: 'zip', type: 'predict', prompt: P,
+      code: 'a = ["timber", "steel", "glass"]\nb = [500, 200]\nprint(len(list(zip(a, b))))',
+      options: ['2', '3', '5', 'ValueError'], answer: 0,
+      explain: 'zip stops at the shorter list, so "glass" is silently dropped.' },
+    { id: 'zip-3', topic: 'zip', type: 'blank', prompt: 'Fill the blank so it prints 160.0.',
+      code: 'kg = [1000, 200]\nfactor = [0.1, 0.3]\ntotal = 0\nfor q, f in ___(kg, factor):\n    total += q * f\nprint(total)',
+      chips: ['zip', 'range', 'len', 'list'], answer: 0, expect: '160.0',
+      explain: 'zip lets you loop over quantities and emission factors side by side: 1000×0.1 + 200×0.3.' },
+    { id: 'zip-4', topic: 'zip', type: 'order', prompt: 'Order the lines to print each material with its mass.',
+      lines: ['names = ["clay", "straw"]', 'kg = [900, 40]', 'for n, q in zip(names, kg):', '    print(f"{n}: {q}")'],
+      expect: 'clay: 900\nstraw: 40',
+      explain: 'Both lists must exist before zip can pair them.' },
+
+    // ---------- dictionaries ----------
+    { id: 'dict-1', topic: 'dicts', type: 'predict', prompt: P,
+      code: 'factors = {"timber": 0.4, "steel": 1.9}\nprint(factors["steel"])',
+      options: ['1.9', '0.4', 'steel', 'KeyError'], answer: 0,
+      explain: 'A dictionary looks values up by key. The key "steel" gives 1.9.' },
+    { id: 'dict-2', topic: 'dicts', type: 'predict', prompt: P,
+      code: 'factors = {"timber": 0.4}\nprint(factors["hemp"])',
+      options: ['KeyError', 'None', '0', 'IndexError'], answer: 0,
+      explain: 'Asking for a key that isn\'t there raises KeyError. Lists give IndexError; dicts give KeyError.' },
+    { id: 'dict-3', topic: 'dicts', type: 'predict', prompt: P,
+      code: 'factors = {"timber": 0.4}\nprint(factors.get("hemp", 0))',
+      options: ['0', 'KeyError', 'None', '0.4'], answer: 0,
+      explain: '.get() returns the default (0 here) instead of crashing when the key is missing.' },
+    { id: 'dict-4', topic: 'dicts', type: 'predict', prompt: P,
+      code: 'factors = {"timber": 0.4}\nfactors["clay"] = 0.05\nprint(len(factors))',
+      options: ['2', '1', '0.45', 'KeyError'], answer: 0,
+      explain: 'Assigning to a new key adds it to the dictionary.' },
+    { id: 'dict-5', topic: 'dicts', type: 'bug', prompt: 'Find the bug: it should print 0.4.',
+      code: 'factors = {"timber": 0.4, "steel": 1.9}\nprint(factors[0])',
+      bugLine: 1, fixes: ['print(factors["timber"])', 'print(factors[1])', 'print(factors.timber)'], answer: 0,
+      expect: '0.4',
+      explain: 'Dictionaries aren\'t indexed by position. Use the key.' },
+    { id: 'dict-6', topic: 'dicts', type: 'predict', prompt: P,
+      code: 'mass = {"clay": 900, "straw": 40}\nfor k, v in mass.items():\n    print(k, v)',
+      options: ['clay 900\nstraw 40', 'clay straw\n900 40', 'clay\nstraw', "('clay', 900)"], answer: 0,
+      explain: '.items() gives (key, value) pairs that unpack into k and v.' },
+    { id: 'dict-7', topic: 'dicts', type: 'blank', prompt: 'Fill the blank to print 1.9.',
+      code: 'factors = {"timber": 0.4, "steel": 1.9}\nprint(factors[___])',
+      chips: ['"steel"', 'steel', '1', '"Steel"'], answer: 0, expect: '1.9',
+      explain: 'Keys are strings, so they need quotes, and they are case-sensitive.' },
+    { id: 'dict-8', topic: 'dicts', type: 'mcq', prompt: 'A dictionary is to a library as…',
+      options: ['a data structure is to a collection of reusable code', 'a list is to a tuple', 'they are the same thing', 'a key is to a value'], answer: 0,
+      explain: 'A dictionary stores key → value pairs. A library (like pandas) is code you import. You clarified this in an early lesson.' },
+
+    // ---------- tuples ----------
+    { id: 'tup-1', topic: 'tuples', type: 'predict', prompt: P,
+      code: 'layer = ("hempcrete", 0.3)\nname, thickness = layer\nprint(thickness)',
+      options: ['0.3', 'hempcrete', "('hempcrete', 0.3)", 'ValueError'], answer: 0,
+      explain: 'Unpacking assigns by position: the first item to name, the second to thickness.' },
+    { id: 'tup-2', topic: 'tuples', type: 'predict', prompt: P,
+      code: 'layer = ("hempcrete", 0.3)\nlayer[1] = 0.4',
+      options: ['TypeError', 'nothing; it works', 'IndexError', 'KeyError'], answer: 0,
+      explain: 'Tuples are immutable: you can\'t change an item after creating one.' },
+    { id: 'tup-3', topic: 'tuples', type: 'predict', prompt: P,
+      code: 'thickness, name = ("hempcrete", 0.3)\nprint(name)',
+      options: ['0.3', 'hempcrete', 'ValueError', 'None'], answer: 0,
+      explain: 'Order matters. The first variable gets the first item, whatever the names say.' },
+    { id: 'tup-4', topic: 'tuples', type: 'mcq', prompt: 'When is a tuple a better choice than a list?',
+      options: ['For a fixed record that shouldn\'t change, like (material, thickness)', 'When you need to append items', 'When you need key lookups', 'Never, lists are always better'], answer: 0,
+      explain: 'Tuples suit fixed bundles of values. Their immutability protects them from accidental edits.' },
+    { id: 'tup-5', topic: 'tuples', type: 'predict', prompt: P,
+      code: 'def min_max(vals):\n    return min(vals), max(vals)\nlo, hi = min_max([45, 120, 80])\nprint(hi - lo)',
+      options: ['75', '120', '45', '(45, 120)'], answer: 0,
+      explain: 'Returning two values actually returns a tuple, which unpacks into lo and hi.' },
+
+    // ---------- functions ----------
+    { id: 'fn-1', topic: 'functions', type: 'predict', prompt: P,
+      code: 'def ghg(kg, factor):\n    return kg * factor\nprint(ghg(100, 0.5))',
+      options: ['50.0', '50', '100.5', 'None'], answer: 0,
+      explain: 'int × float gives a float, so 100 × 0.5 = 50.0.' },
+    { id: 'fn-2', topic: 'functions', type: 'predict', prompt: P,
+      code: 'def ghg(kg, factor):\n    print(kg * factor)\nresult = ghg(100, 2)\nprint(result)',
+      options: ['200\nNone', '200\n200', '200', 'None'], answer: 0,
+      explain: 'The function prints 200 but returns nothing, so result is None. Printing and returning are different things.' },
+    { id: 'fn-3', topic: 'functions', type: 'bug', prompt: 'Find the bug: it should print 200.',
+      code: 'def ghg(kg, factor):\n    kg * factor\nprint(ghg(100, 2))',
+      bugLine: 1, fixes: ['    return kg * factor', '    print(kg * factor)', '    ghg = kg * factor'], answer: 0,
+      expect: '200',
+      explain: 'Without return, the function hands back None.' },
+    { id: 'fn-4', topic: 'functions', type: 'predict', prompt: P,
+      code: 'def r_value(thickness, k=0.04):\n    return thickness / k\nprint(r_value(0.2))',
+      options: ['5.0', '0.008', 'TypeError', '0.2'], answer: 0,
+      explain: 'k has a default of 0.04, so it can be left out: 0.2 / 0.04 = 5.0.' },
+    { id: 'fn-5', topic: 'functions', type: 'mcq', prompt: 'In ghg(100, 2), what are 100 and 2?',
+      options: ['Arguments passed to the function', 'Parameters parsed by the function', 'Return values', 'Global variables'], answer: 0,
+      explain: 'You pass arguments in. "Parsed" means reading text. You sorted out passed vs parsed early in Phase 1.' },
+    { id: 'fn-6', topic: 'functions', type: 'order', prompt: 'Order the lines to define and call the function (prints 60.0).',
+      lines: ['def ghg(kg, factor):', '    """Embodied GHG emissions in kg CO2e."""', '    return kg * factor', 'print(ghg(200, 0.3))'],
+      expect: '60.0',
+      explain: 'def line, docstring, indented body, then call it outside the function.' },
+    { id: 'fn-7', topic: 'functions', type: 'blank', prompt: 'Fill the blank so it prints 30.',
+      code: 'def total(vals):\n    ___ sum(vals)\nprint(total([10, 20]))',
+      chips: ['return', 'print', 'yield', 'def'], answer: 0, expect: '30',
+      explain: 'return sends the value back to the caller, so print(total(...)) has something to print.' },
+
+    // ---------- f-strings ----------
+    { id: 'fs-1', topic: 'fstrings', type: 'predict', prompt: P,
+      code: 'ghg = 1234.567\nprint(f"{ghg:.1f} kg CO2e")',
+      options: ['1234.6 kg CO2e', '1234.5 kg CO2e', '1234.567 kg CO2e', '1.2e+03 kg CO2e'], answer: 0,
+      explain: ':.1f means one decimal place, rounded.' },
+    { id: 'fs-2', topic: 'fstrings', type: 'predict', prompt: P,
+      code: 'ghg = 1234567\nprint(f"{ghg:,}")',
+      options: ['1,234,567', '1234567', '1.234.567', '1,234,567.0'], answer: 0,
+      explain: ':, adds thousands separators, which is handy for big inventory totals.' },
+    { id: 'fs-3', topic: 'fstrings', type: 'bug', prompt: 'Find the bug: it should print "timber: 500 kg".',
+      code: 'm = "timber"\nq = 500\nprint("{m}: {q} kg")',
+      bugLine: 2, fixes: ['print(f"{m}: {q} kg")', 'print("{m}: {q} kg".f)', 'print(f"m: q kg")'], answer: 0,
+      expect: 'timber: 500 kg',
+      explain: 'Without the f prefix the braces are printed literally.' },
+    { id: 'fs-4', topic: 'fstrings', type: 'predict', prompt: P,
+      code: 'print(f"[{"clay":>6}]")',
+      options: ['[  clay]', '[clay  ]', '[ clay ]', '[clay]'], answer: 0,
+      explain: '>6 right-aligns in a 6-character column. < aligns left, ^ centres.' },
+    { id: 'fs-5', topic: 'fstrings', type: 'blank', prompt: 'Fill the blank to print "1.35 W/m²K".',
+      code: 'u = 1.3456\nprint(f"{u:___} W/m²K")',
+      chips: ['.2f', '.3f', '2f', '.2'], answer: 0, expect: '1.35 W/m²K',
+      explain: '.2f means two decimal places. .2 on its own means two significant figures, which gives 1.3.' },
+    { id: 'fs-6', topic: 'fstrings', type: 'predict', prompt: P,
+      code: 'share = 0.237\nprint(f"{share:.0%}")',
+      options: ['24%', '0.24%', '23.7%', '0%'], answer: 0,
+      explain: '% multiplies by 100 and adds a percent sign. .0 means no decimals.' },
+
+    // ---------- terminology ----------
+    { id: 'term-1', topic: 'terminology', type: 'mcq', prompt: 'Which term does this project use?',
+      options: ['embodied GHG emissions', 'embodied carbon', 'carbon emissions', 'carbon-intensive'], answer: 0,
+      explain: 'Carbon itself isn\'t the problem; greenhouse gases are. So: embodied greenhouse gas (GHG) emissions.' },
+    { id: 'term-2', topic: 'terminology', type: 'mcq', prompt: 'A 6-storey apartment block is…',
+      options: ['medium-rise', 'low-rise', 'high-rise', 'super high-rise'], answer: 0,
+      explain: 'ABS/NSW definitions: low-rise 1–3, medium-rise 4–8, high-rise 9–19, super high-rise 20+.' },
+    { id: 'term-3', topic: 'terminology', type: 'mcq', prompt: 'Which phrasing matches the project conventions?',
+      options: ['Households use energy for heating', 'Households consume carbon for heating', 'Households are carbon-intensive heaters', 'Households emit carbon via heating'], answer: 0,
+      explain: 'Talk about energy use, using energy and users of energy.' },
+
+    // ---------- LCA & building science ----------
+    { id: 'lca-1', topic: 'lca', type: 'mcq', prompt: 'In EN 15978, stages A1–A3 are the…',
+      options: ['Product stage (raw materials, transport, manufacturing)', 'Use stage', 'End-of-life stage', 'Benefits beyond the system boundary'], answer: 0,
+      explain: 'A1 raw material supply, A2 transport to the factory, A3 manufacturing.' },
+    { id: 'lca-2', topic: 'lca', type: 'mcq', prompt: 'Module B6 covers…',
+      options: ['Operational energy use', 'Maintenance', 'Demolition', 'Transport to site'], answer: 0,
+      explain: 'B6 is operational energy use, which is where operational GHG emissions come from. B7 is operational water use.' },
+    { id: 'lca-3', topic: 'lca', type: 'mcq', prompt: 'Lower U-value means…',
+      options: ['Less heat flows through: better insulation', 'More heat flows through', 'Higher thermal mass', 'Higher embodied GHG emissions'], answer: 0,
+      explain: 'U-value (W/m²K) is the rate of heat flow. Lower is better insulating.' },
+    { id: 'lca-4', topic: 'lca', type: 'mcq', prompt: 'What does an EPD provide?',
+      options: ['Verified life-cycle impacts of a product', 'A building\'s energy rating', 'A thermal comfort survey', 'A planning permit'], answer: 0,
+      explain: 'An Environmental Product Declaration reports a product\'s LCA results, usually per declared unit.' },
+    { id: 'lca-5', topic: 'lca', type: 'mcq', prompt: 'C1–C4 modules cover…',
+      options: ['End of life', 'Construction', 'Use', 'Product manufacture'], answer: 0,
+      explain: 'C1 deconstruction, C2 transport, C3 waste processing, C4 disposal.' },
+    { id: 'lca-6', topic: 'lca', type: 'predict', prompt: 'Heat loss through a wall (Q = U × A × ΔT). What does this print?',
+      code: 'u = 0.5\narea = 20\ndelta_t = 15\nprint(u * area * delta_t)',
+      options: ['150.0', '35.5', '150', '0.5'], answer: 0,
+      explain: '0.5 W/m²K × 20 m² × 15 K = 150 W. The float u makes the result a float.' },
+    { id: 'lca-7', topic: 'lca', type: 'mcq', prompt: 'In your thermal simulator, how many hourly steps are in a year?',
+      options: ['8,760', '365', '525,600', '8,784 every year'], answer: 0,
+      explain: '365 × 24 = 8,760 hours, the length of a standard EPW weather file.' },
+  ];
+
+  return { TOPICS, UNLOCKED, QUESTIONS };
+});
+
+</script>
+<script>
+{
+const E = window.Engine, B = window.Bank;
+const KEY = 'dailyPython.v1';
+const app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const byId = Object.fromEntries(B.QUESTIONS.map(q => [q.id, q]));
+
+function load() {
+  try { const raw = localStorage.getItem(KEY); if (raw) return E.importState(raw); } catch (e) {}
+  return E.newState();
+}
+let state = load();
+function save() { try { localStorage.setItem(KEY, E.exportState(state)); } catch (e) {} }
+const today = () => E.localDay(new Date());
+
+let run = null; // {ids, i, results[], counts, answered}
+
+// ---------- home ----------
+function wallSVG(w, h) {
+  const t = today(), days = new Set(state.days), n = 14, lh = h / n;
+  const tones = ['var(--earth1)','var(--earth2)','var(--earth3)','var(--earth4)'];
+  let s = '';
+  for (let k = 0; k < n; k++) {
+    const d = E.addDays(t, -k), y = h - (k + 1) * lh;
+    if (days.has(d)) {
+      const tone = tones[(E.daysBetween('2026-01-01', d) * 7) % 4];
+      const cls = k === 0 ? ' class="layer-new"' : '';
+      s += `<g${cls}><rect x="0" y="${y}" width="${w}" height="${lh + .6}" fill="${tone}"/>`;
+      for (let p = 0; p < 6; p++) { const px = ((E.daysBetween('2026-01-01', d) * 37 + p * 53) % 97) / 97 * w; s += `<circle cx="${px}" cy="${y + lh * .5}" r="${Math.max(1, lh * .12)}" fill="rgba(0,0,0,.12)"/>`; }
+      s += `<line x1="0" x2="${w}" y1="${y + lh}" y2="${y + lh}" stroke="rgba(0,0,0,.18)"/></g>`;
+    } else {
+      s += `<line x1="0" x2="${w}" y1="${y + lh}" y2="${y + lh}" stroke="var(--line)" stroke-dasharray="3 5"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${s}</svg>`;
+}
+
+function calendar() {
+  const t = today(), days = new Set(state.days);
+  const dow = (new Date().getDay() + 6) % 7; // Monday = 0
+  const start = E.addDays(t, -(28 + dow));
+  let cells = ['M','T','W','T','F','S','S'].map(x => `<em>${x}</em>`).join('');
+  for (let k = 0; k < 35; k++) {
+    const d = E.addDays(start, k);
+    if (d > t) { cells += '<i class="blank"></i>'; continue; }
+    cells += `<i class="${days.has(d) ? 'on' : ''}${d === t ? ' today' : ''}" title="${d}"></i>`;
+  }
+  return cells;
+}
+
+function home() {
+  const doneToday = state.lastDay === today();
+  const pool = E.pickSession(state, B.QUESTIONS, B.UNLOCKED, today());
+  app.innerHTML = `
+    <div class="top"><h1>Daily Python</h1><button class="icon" id="gear" aria-label="Backup and settings">⚙︎</button></div>
+    <div class="wall" id="wall"><div class="carve"><b>${state.streak}</b><span>${state.streak === 1 ? 'day' : 'days'} in a row</span></div></div>
+    <div class="figs">
+      <div class="fig"><b>${state.best}</b><span class="muted">best streak</span></div>
+      <div class="fig"><b>${state.freezes}</b><span class="muted">streak freezes</span></div>
+      <div class="fig"><b>${Object.keys(state.cards).length}</b><span class="muted">of ${B.QUESTIONS.length} seen</span></div>
+    </div>
+    <p class="muted" style="margin:0 0 6px">Last 5 weeks</p>
+    <div class="cal">${calendar()}</div>
+    <div class="bar home">
+      ${pool.length === 0 ? '<p class="muted">No questions are unlocked yet. Ask the tutor chat to add some.</p>' :
+        doneToday ? `<p class="muted" style="margin:0">Done for today ✓ Come back tomorrow to add a layer.</p><button class="btn ghost" id="go">Practise 5 more (won't change your streak)</button>` :
+        `<button class="btn" id="go">Start today's ${pool.length}</button>`}
+    </div>`;
+  const wall = document.getElementById('wall');
+  const draw = () => { const old = wall.querySelector('svg'); if (old) old.remove(); wall.insertAdjacentHTML('afterbegin', wallSVG(wall.clientWidth || 320, wall.clientHeight || 260)); };
+  draw();
+  if (window.ResizeObserver) { const ro = new ResizeObserver(draw); ro.observe(wall); }
+  document.getElementById('gear').onclick = settings;
+  const go = document.getElementById('go');
+  if (go) go.onclick = () => start(pool);
+}
+
+// ---------- session ----------
+function start(ids) {
+  run = { ids, i: 0, results: [], counts: state.lastDay !== today() };
+  question();
+}
+
+function shuffled(n) {
+  const a = [...Array(n).keys()];
+  for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+function progress() {
+  return `<div class="prog">${run.ids.map((_, k) => `<i class="${k < run.results.length ? (run.results[k] ? 'ok' : 'bad') : k === run.i ? 'cur' : ''}"></i>`).join('')}</div>`;
+}
+
+function codeLines(code, tap) {
+  return code.split('\n').map((l, k) =>
+    `<button class="ln${tap ? ' tap' : ''}" data-k="${k}" ${tap ? '' : 'tabindex="-1"'}>${esc(l) || ' '}</button>`).join('');
+}
+
+function question() {
+  const q = byId[run.ids[run.i]];
+  const label = B.TOPICS[q.topic] || q.topic;
+  let body = '';
+  if (q.type === 'mcq' || q.type === 'predict') {
+    const order = shuffled(q.options.length), mono = q.type === 'predict' ? ' mono' : '';
+    body = (q.code ? `<pre class="code">${codeLines(q.code)}</pre>` : '') +
+      `<div class="opts">${order.map(o => `<button class="opt${mono}" data-o="${o}">${esc(q.options[o])}</button>`).join('')}</div>`;
+  } else if (q.type === 'bug') {
+    body = `<p class="muted" id="hint">Step 1: tap the line with the bug.</p><pre class="code" id="pre">${codeLines(q.code, true)}</pre><div class="opts" id="fixes"></div>`;
+  } else if (q.type === 'blank') {
+    const html = codeLines(q.code).replace('___', '<span class="slot" id="slot">___</span>');
+    const order = shuffled(q.chips.length);
+    body = `<pre class="code">${html}</pre><div class="chips">${order.map(o => `<button class="chip" data-o="${o}">${esc(q.chips[o])}</button>`).join('')}</div>`;
+  } else if (q.type === 'order') {
+    let order = shuffled(q.lines.length);
+    if (order.every((v, k) => v === k)) order.reverse();
+    run.built = [];
+    body = `<p class="muted">Tap the lines in order. Tap a placed line to take it back.</p><div class="built" id="built"></div><div class="chips" id="pile">${order.map(o => `<button class="chip" data-o="${o}">${esc(q.lines[o])}</button>`).join('')}</div>`;
+  }
+  app.innerHTML = `${progress()}<span class="tag">${esc(label)} · ${run.i + 1} of ${run.ids.length}</span><p class="q">${esc(q.prompt)}</p>${body}<div id="fb"></div><div class="bar" id="bar"></div>`;
+  wire(q);
+}
+
+function wire(q) {
+  if (q.type === 'mcq' || q.type === 'predict') {
+    app.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+      const pick = +b.dataset.o, ok = pick === q.answer;
+      app.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.o === q.answer) x.classList.add('right'); });
+      if (!ok) b.classList.add('wrong');
+      answer(q, ok);
+    });
+  } else if (q.type === 'bug') {
+    app.querySelectorAll('#pre .ln').forEach(b => b.onclick = () => {
+      const k = +b.dataset.k;
+      app.querySelectorAll('#pre .ln').forEach(x => { x.onclick = null; x.classList.remove('tap'); });
+      b.classList.add('hit');
+      if (k !== q.bugLine) {
+        b.classList.add('wrong');
+        app.querySelector(`#pre .ln[data-k="${q.bugLine}"]`).classList.add('right');
+        document.getElementById('hint').textContent = `The bug was on line ${q.bugLine + 1}. Fix: ${q.fixes[q.answer].trim()}`;
+        return answer(q, false);
+      }
+      document.getElementById('hint').textContent = 'Step 2: pick the fix for that line.';
+      const order = shuffled(q.fixes.length);
+      const fx = document.getElementById('fixes');
+      fx.innerHTML = order.map(o => `<button class="opt mono" data-o="${o}">${esc(q.fixes[o])}</button>`).join('');
+      fx.querySelectorAll('.opt').forEach(f => f.onclick = () => {
+        const ok = +f.dataset.o === q.answer;
+        fx.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.o === q.answer) x.classList.add('right'); });
+        if (!ok) f.classList.add('wrong');
+        b.classList.add(ok ? 'right' : 'wrong');
+        answer(q, ok);
+      });
+    });
+  } else if (q.type === 'blank') {
+    app.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+      const pick = +c.dataset.o, ok = pick === q.answer;
+      const slot = document.getElementById('slot');
+      slot.textContent = q.chips[q.answer];
+      app.querySelectorAll('.chip').forEach(x => { x.disabled = true; if (+x.dataset.o === q.answer) x.classList.add('used'); });
+      if (!ok) { c.style.borderColor = 'var(--bad)'; }
+      answer(q, ok);
+    });
+  } else if (q.type === 'order') {
+    const built = document.getElementById('built'), pile = document.getElementById('pile');
+    const bar = document.getElementById('bar');
+    const render = () => {
+      built.innerHTML = run.built.map((o, k) => `<button class="chip" data-k="${k}">${esc(q.lines[o])}</button>`).join('');
+      pile.querySelectorAll('.chip').forEach(c => c.classList.toggle('used', run.built.includes(+c.dataset.o)));
+      built.querySelectorAll('.chip').forEach(c => c.onclick = () => { run.built.splice(+c.dataset.k, 1); render(); });
+      bar.innerHTML = `<button class="btn" id="check" ${run.built.length === q.lines.length ? '' : 'disabled'}>Check</button>`;
+      document.getElementById('check').onclick = () => {
+        const ok = run.built.every((o, k) => q.lines[o] === q.lines[k]);
+        built.querySelectorAll('.chip').forEach((c, k) => { c.disabled = true; c.style.borderColor = q.lines[run.built[k]] === q.lines[k] ? 'var(--ok)' : 'var(--bad)'; });
+        pile.querySelectorAll('.chip').forEach(c => c.disabled = true);
+        if (!ok) built.insertAdjacentHTML('afterend', `<p class="muted">Correct order:</p><pre class="code">${codeLines(q.lines.join('\n'))}</pre>`);
+        answer(q, ok);
+      };
+    };
+    pile.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+      const o = +c.dataset.o;
+      if (!run.built.includes(o)) { run.built.push(o); render(); }
+    });
+    render();
+  }
+}
+
+function answer(q, ok) {
+  E.recordAnswer(state, q.id, ok, today());
+  save();
+  run.results.push(ok);
+  document.getElementById('fb').innerHTML = `<div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Correct ✓' : 'Not quite'}</b>${esc(q.explain)}</div>`;
+  const last = run.i === run.ids.length - 1;
+  document.getElementById('bar').innerHTML = `<button class="btn" id="next">${last ? 'Finish' : 'Next'}</button>`;
+  document.getElementById('next').onclick = () => { if (last) finish(); else { run.i++; question(); } };
+  document.getElementById('fb').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function finish() {
+  const score = run.results.filter(Boolean).length;
+  let msg = 'Extra practice: your streak stays as it is.';
+  if (run.counts) {
+    const r = E.completeDay(state, today());
+    save();
+    msg = r.alreadyDone ? 'Already counted today.' :
+      `New layer laid. Streak: ${r.streak} ${r.streak === 1 ? 'day' : 'days'}.` +
+      (r.freezesUsed ? ` ${r.freezesUsed} freeze${r.freezesUsed > 1 ? 's' : ''} used to cover missed days.` : '') +
+      (r.freezeEarned ? ' You earned a streak freeze ❄︎' : '');
+  }
+  app.innerHTML = `${progress()}<div class="done"><b>${score}/${run.ids.length}</b><p>${esc(msg)}</p></div>
+    <div class="bar"><button class="btn" id="home">Back to the wall</button></div>`;
+  document.getElementById('home').onclick = home;
+  run = null;
+}
+
+// ---------- settings ----------
+function settings() {
+  app.innerHTML = `
+    <div class="top"><h2>Backup</h2><button class="icon" id="back" aria-label="Back">←</button></div>
+    <div class="stack">
+      <p class="muted" style="margin:0">Your progress lives in this browser only. Copy a backup now and then (paste it into a note), especially before changing phones or clearing your browser.</p>
+      <textarea id="exp" readonly aria-label="Backup text">${esc(E.exportState(state))}</textarea>
+      <button class="btn ghost" id="copy">Copy backup</button>
+      <h2 style="margin-top:10px">Restore</h2>
+      <textarea id="imp" placeholder="Paste a backup here" aria-label="Paste backup"></textarea>
+      <label class="muted" for="file">…or choose a backup file</label>
+      <input type="file" id="file" accept=".json,.txt,application/json,text/plain">
+      <button class="btn" id="restore">Restore backup</button>
+      <p id="msg" class="muted" role="status"></p>
+    </div>`;
+  document.getElementById('back').onclick = home;
+  const msg = document.getElementById('msg');
+  document.getElementById('copy').onclick = async () => {
+    const t = document.getElementById('exp');
+    try { await navigator.clipboard.writeText(t.value); msg.textContent = 'Copied.'; }
+    catch (e) { t.select(); msg.textContent = 'Select-all is on: copy it with your phone\'s Copy button.'; }
+  };
+  document.getElementById('file').onchange = ev => {
+    const f = ev.target.files[0]; if (!f) return;
+    f.text().then(t => { document.getElementById('imp').value = t; });
+  };
+  document.getElementById('restore').onclick = () => {
+    try {
+      state = E.importState(document.getElementById('imp').value.trim());
+      save();
+      msg.textContent = 'Restored ✓';
+      document.getElementById('exp').value = E.exportState(state);
+    } catch (e) {
+      msg.textContent = 'That isn\'t a valid Daily Python backup. Nothing was changed.';
+    }
+  };
+}
+
+home();
+}
+</script>
+</body>
+</html>
