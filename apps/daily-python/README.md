@@ -19,12 +19,14 @@ Five tap-based questions a day on your phone. Each day you finish adds a layer t
 | `tests/engine.test.js` | Engine tests |
 
 ## For the tutor chat: adding questions
-1. Add questions to `QUESTIONS` in `questions.js`. Use building science and LCA examples, keep code short (phone screen), and write a clear `explain`.
+1. Add questions to `QUESTIONS` in `questions.js`. For `order` questions, list any other order that also works in `alts`; the verifier will tell you. Use building science and LCA examples, keep code short (phone screen), and write a clear `explain`.
 2. When Adrian starts a new topic in `skills.md`, add it to `TOPICS` and `UNLOCKED`.
 3. Check and build:
    ```
    python3 -I apps/daily-python/verify_questions.py
+   PYTHON=python3.11 python3 -I apps/daily-python/verify_questions.py   # Colab-era Python too
    node --test apps/daily-python/tests/engine.test.js
    python3 -I apps/daily-python/build.py
+   python3 apps/daily-python/tests/ui_test.py
    ```
 4. Republish `dist/daily-python.html` to the existing "Daily Python" artifact. Progress on the phone is kept.

@@ -148,3 +148,21 @@ test('the real question bank gives a full session of known questions', () => {
   const known = new Set(Bank.QUESTIONS.map(q => q.id));
   ids.forEach(id => assert.ok(known.has(id)));
 });
+
+test('displayStreak shows 0 once the gap is longer than the freezes', () => {
+  const s = E.newState();
+  for (let i = 0; i < 5; i++) E.completeDay(s, E.addDays(T, i));
+  const last = E.addDays(T, 4);
+  assert.equal(E.displayStreak(s, last), 5);
+  assert.equal(E.displayStreak(s, E.addDays(last, 1)), 5);
+  assert.equal(E.displayStreak(s, E.addDays(last, 3)), 5); // 2 missed, 2 freezes
+  assert.equal(E.displayStreak(s, E.addDays(last, 4)), 0); // 3 missed
+});
+
+test('completeDay with the clock moved back does not count again', () => {
+  const s = E.newState();
+  E.completeDay(s, T);
+  const r = E.completeDay(s, E.addDays(T, -1));
+  assert.equal(r.alreadyDone, true);
+  assert.equal(s.lastDay, T);
+});

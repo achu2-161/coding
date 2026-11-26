@@ -3,13 +3,17 @@
 Run:  python3 -I apps/daily-python/verify_questions.py
 Exits 1 and lists the problems if any question is wrong.
 """
+import itertools
 import json
+import os
 import pathlib
 import subprocess
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 TYPES = {"mcq", "predict", "bug", "blank", "order"}
+# Set PYTHON=python3.11 to check against an older Python as well.
+PYTHON = os.environ.get("PYTHON", sys.executable)
 BANNED = ["embodied carbon", "carbon emissions", "carbon-intensive"]
 
 
@@ -30,7 +34,7 @@ def run(code):
     """Return (stdout stripped, error name or None)."""
     try:
         p = subprocess.run(
-            [sys.executable, "-I", "-c", code],
+            [PYTHON, "-I", "-c", code],
             capture_output=True, text=True, timeout=5,
         )
     except subprocess.TimeoutExpired:
@@ -111,6 +115,21 @@ def check(q, topics):
             problems.append(f"lines give {e or o!r}, expected {q['expect']!r}")
         if len(set(q["lines"])) != len(q["lines"]):
             problems.append("duplicate lines make the order ambiguous")
+        # Every other order that also prints `expect` must be listed in `alts`,
+        # unless the question is marked strictOrder (it works but is bad style).
+        n = len(q["lines"])
+        allowed = {tuple(range(n))} | {tuple(a) for a in q.get("alts", [])}
+        if not q.get("strictOrder"):
+            for perm in itertools.permutations(range(n)):
+                if perm in allowed:
+                    continue
+                o, e = run("\n".join(q["lines"][i] for i in perm))
+                if not e and o == q["expect"]:
+                    problems.append(f"order {list(perm)} also works; add it to alts")
+        for a in q.get("alts", []):
+            o, e = run("\n".join(q["lines"][i] for i in a))
+            if e or o != q["expect"]:
+                problems.append(f"alt {a} does not work")
     return problems
 
 

@@ -4,39 +4,38 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daily Python</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* VOICE everyday learning: warm, tactile, calm
    IDEA a rammed-earth wall built one compacted layer per day of practice
    PICTURE the wall section: last 28 days as strata, today's layer on top, streak carved in
    COLOUR white ground, earth ochres for layers, charcoal ink, hemp-lime accent for correct, clay red for wrong
-   TYPE Archivo 800 display + Inter text, JetBrains Mono for code
+   TYPE the phone's own system sans (heavy weight for display) and system monospace for code: no web fonts, opens offline
    LAYOUT one column at phone width: wall, figures, start button; questions fill the screen with a sticky action bar */
-:root{color-scheme:light dark;--bg:light-dark(#ffffff,#16130f);--ink:light-dark(#1d1a16,#f1ebe2);--soft:light-dark(#6d655a,#b3a998);--line:light-dark(#e6dfd4,#3a332a);--panel:light-dark(#f6f2eb,#221d17);--earth1:#c9874e;--earth2:#b46f3c;--earth3:#d9a46b;--earth4:#9c5a30;--ok:light-dark(#3f7d1f,#b7e06a);--okbg:light-dark(#eef7dc,#26341a);--bad:light-dark(#b23a1c,#ff8a66);--badbg:light-dark(#fbe7df,#3a1f17);--ice:light-dark(#d7e7ef,#2c3c45);--code:light-dark(#2a2520,#0f0d0a);--codeink:#f3ecdf}
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+:root{color-scheme:light;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--earth1:#c9874e;--earth2:#b46f3c;--earth3:#d9a46b;--earth4:#9c5a30;--codeink:#f3ecdf;--bg:#ffffff;--ink:#1d1a16;--soft:#6d655a;--line:#e6dfd4;--panel:#f6f2eb;--ok:#3f7d1f;--okbg:#eef7dc;--bad:#b23a1c;--badbg:#fbe7df;--code:#2a2520;--carvebg:rgba(255,255,255,.86)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#16130f;--ink:#f1ebe2;--soft:#b3a998;--line:#3a332a;--panel:#221d17;--ok:#b7e06a;--okbg:#26341a;--bad:#ff8a66;--badbg:#3a1f17;--code:#0f0d0a;--carvebg:rgba(22,19,15,.86)}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#16130f;--ink:#f1ebe2;--soft:#b3a998;--line:#3a332a;--panel:#221d17;--ok:#b7e06a;--okbg:#26341a;--bad:#ff8a66;--badbg:#3a1f17;--code:#0f0d0a;--carvebg:rgba(22,19,15,.86)}
 *{box-sizing:border-box;min-width:0}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);overflow-x:clip;-webkit-tap-highlight-color:transparent}
 main{max-width:560px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
-h1,h2{font-family:Archivo,system-ui,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:0}
+h1,h2{font-family:var(--sans);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:0}
 h1{font-size:34px}h2{font-size:24px}
 .muted{color:var(--soft);font-size:14px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
 .icon{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px;cursor:pointer}
 .wall{position:relative;height:clamp(220px,42svh,340px);border-radius:16px;overflow:hidden;background:var(--panel)}
 .wall svg{position:absolute;inset:0;width:100%;height:100%}
-.carve{position:absolute;left:12px;top:12px;color:var(--ink);background:color-mix(in srgb,var(--bg) 82%,transparent);border-radius:12px;padding:8px 14px 10px}
-.carve b{display:block;font:800 clamp(56px,16vw,84px)/1 Archivo,sans-serif;letter-spacing:-.03em}
+.carve{position:absolute;left:12px;top:12px;color:var(--ink);background:var(--carvebg);border-radius:12px;padding:8px 14px 10px}
+.carve b{display:block;font:800 clamp(56px,16vw,84px)/1 var(--sans);letter-spacing:-.03em}
 .carve span{font-weight:600}
 .figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
 .fig{background:var(--panel);border-radius:12px;padding:10px 12px}
-.fig b{display:block;font:800 26px/1.1 Archivo,sans-serif}
+.fig b{display:block;font:800 26px/1.1 var(--sans)}
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:4px 0 16px}
 .cal i{aspect-ratio:1;border-radius:5px;background:var(--line);display:block}
 .cal i.on{background:var(--earth2)}.cal i.today{outline:2px solid var(--ink);outline-offset:1px}.cal i.blank{background:none}
 .cal em{font-style:normal;font-size:12px;color:var(--soft);text-align:center}
-.btn{display:block;width:100%;min-height:52px;border:0;border-radius:14px;background:var(--ink);color:var(--bg);font:600 17px Inter,sans-serif;cursor:pointer;padding:12px 16px}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:14px;background:var(--ink);color:var(--bg);font:600 17px var(--sans);cursor:pointer;padding:12px 16px}
 .btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
 .btn:disabled{opacity:.35;cursor:default}
 .btn:focus-visible,.opt:focus-visible,.icon:focus-visible,.ln:focus-visible,.chip:focus-visible{outline:3px solid var(--earth2);outline-offset:2px}
@@ -45,15 +44,15 @@ h1{font-size:34px}h2{font-size:24px}
 .prog{display:flex;gap:6px;margin-bottom:16px}.prog i{flex:1;height:6px;border-radius:3px;background:var(--line)}
 .prog i.ok{background:var(--ok)}.prog i.bad{background:var(--bad)}.prog i.cur{background:var(--earth2)}
 .tag{display:inline-block;font-size:13px;color:var(--soft);margin-bottom:6px}
-.q{font:600 19px/1.35 Inter,sans-serif;margin:0 0 12px}
-pre.code{margin:0 0 14px;background:var(--code);color:var(--codeink);border-radius:12px;padding:12px 0;overflow-x:auto;font:14px/1.6 "JetBrains Mono",ui-monospace,monospace}
+.q{font:600 19px/1.35 var(--sans);margin:0 0 12px}
+pre.code{margin:0 0 14px;background:var(--code);color:var(--codeink);border-radius:12px;padding:12px 0;overflow-x:auto;font:14px/1.6 var(--mono)}
 .ln{display:block;width:100%;text-align:left;border:0;background:none;color:inherit;font:inherit;padding:2px 14px;white-space:pre;min-height:30px;cursor:default}
 .ln.tap{cursor:pointer}.ln.tap:hover{background:rgba(255,255,255,.07)}
 .ln.hit{background:rgba(201,135,78,.35)}.ln.right{background:rgba(183,224,106,.25)}.ln.wrong{background:rgba(255,138,102,.3)}
 .slot{display:inline-block;min-width:3ch;border-bottom:2px solid var(--earth3);color:var(--earth3)}
 .opts{display:grid;gap:8px}
-.opt{text-align:left;width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:16px/1.4 Inter,sans-serif;padding:10px 14px;cursor:pointer;white-space:pre-wrap}
-.opt.mono,.chip{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:15px}
+.opt{text-align:left;width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:16px/1.4 var(--sans);padding:10px 14px;cursor:pointer;white-space:pre-wrap}
+.opt.mono,.chip{font-family:var(--mono);font-size:15px}
 .opt.right{border-color:var(--ok);background:var(--okbg)}.opt.wrong{border-color:var(--bad);background:var(--badbg)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{max-width:100%;overflow-x:auto;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:8px 12px;cursor:pointer;white-space:pre;text-align:left}
@@ -63,10 +62,10 @@ pre.code{margin:0 0 14px;background:var(--code);color:var(--codeink);border-radi
 .fb{border-radius:12px;padding:12px 14px;margin-top:14px}
 .fb.ok{background:var(--okbg)}.fb.bad{background:var(--badbg)}
 .fb b{display:block;margin-bottom:4px}
-textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel);color:var(--ink)}
+textarea{width:100%;min-height:120px;font:13px/1.4 var(--mono);border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel);color:var(--ink)}
 .stack{display:grid;gap:10px}
 .done{text-align:center;padding:18px 0}
-.done b{font:800 64px/1 Archivo,sans-serif;display:block}
+.done b{font:800 64px/1 var(--sans);display:block}
 @media(prefers-reduced-motion:no-preference){.layer-new{animation:tamp .7s ease-out}@keyframes tamp{from{transform:translateY(-30px);opacity:0}to{transform:none;opacity:1}}}
 </style>
 </head>
@@ -146,7 +145,7 @@ textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;bo
 
   // ---- streaks ----
   function completeDay(state, today) {
-    if (state.lastDay === today) {
+    if (state.lastDay !== null && today <= state.lastDay) { // same day, or clock moved back
       return { streak: state.streak, freezesUsed: 0, freezeEarned: false, alreadyDone: true };
     }
     let freezesUsed = 0;
@@ -172,6 +171,13 @@ textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;bo
     return { streak: state.streak, freezesUsed, freezeEarned, alreadyDone: false };
   }
 
+  // Streak to show on the home screen: 0 if the missed days are already more than the freezes.
+  function displayStreak(state, today) {
+    if (state.lastDay === null) return 0;
+    const missed = daysBetween(state.lastDay, today) - 1;
+    return missed > state.freezes ? 0 : state.streak;
+  }
+
   // ---- backup ----
   function exportState(state) { return JSON.stringify(state); }
   function importState(json) {
@@ -183,7 +189,7 @@ textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;bo
     return s;
   }
 
-  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, exportState, importState };
+  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, displayStreak, exportState, importState };
 });
 
 </script>
@@ -318,8 +324,8 @@ textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;bo
       explain: '.append() adds one item to the end of the list, so it now has 2 items.' },
     { id: 'list-6', topic: 'lists-loops', type: 'order', prompt: 'Put the lines in order to print the total 245.',
       lines: ['ghg = [120, 45, 80]', 'total = 0', 'for g in ghg:', '    total = total + g', 'print(total)'],
-      expect: '245',
-      explain: 'Set up the data and the total, loop to add, then print after the loop (not indented).' },
+      expect: '245', alts: [[1, 0, 2, 3, 4]],
+      explain: 'Set up the data and the total (either order works), loop to add, then print after the loop (not indented).' },
     { id: 'list-7', topic: 'lists-loops', type: 'bug', prompt: 'Find the bug: this should print 245 once.',
       code: 'ghg = [120, 45, 80]\ntotal = 0\nfor g in ghg:\n    total = total + g\n    print(total)',
       bugLine: 4, fixes: ['print(total)', '    print(g)', '    print(ghg)'], answer: 0,
@@ -349,8 +355,8 @@ textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;bo
       explain: 'zip lets you loop over quantities and emission factors side by side: 1000×0.1 + 200×0.3.' },
     { id: 'zip-4', topic: 'zip', type: 'order', prompt: 'Order the lines to print each material with its mass.',
       lines: ['names = ["clay", "straw"]', 'kg = [900, 40]', 'for n, q in zip(names, kg):', '    print(f"{n}: {q}")'],
-      expect: 'clay: 900\nstraw: 40',
-      explain: 'Both lists must exist before zip can pair them.' },
+      expect: 'clay: 900\nstraw: 40', alts: [[1, 0, 2, 3]],
+      explain: 'Both lists must exist before zip can pair them; which one comes first doesn\'t matter.' },
 
     // ---------- dictionaries ----------
     { id: 'dict-1', topic: 'dicts', type: 'predict', prompt: P,
@@ -430,8 +436,8 @@ textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;bo
       explain: 'You pass arguments in. "Parsed" means reading text. You sorted out passed vs parsed early in Phase 1.' },
     { id: 'fn-6', topic: 'functions', type: 'order', prompt: 'Order the lines to define and call the function (prints 60.0).',
       lines: ['def ghg(kg, factor):', '    """Embodied GHG emissions in kg CO2e."""', '    return kg * factor', 'print(ghg(200, 0.3))'],
-      expect: '60.0',
-      explain: 'def line, docstring, indented body, then call it outside the function.' },
+      expect: '60.0', strictOrder: true,
+      explain: 'def line, docstring, indented body, then call it outside the function. A docstring only counts if it is the first line of the body.' },
     { id: 'fn-7', topic: 'functions', type: 'blank', prompt: 'Fill the blank so it prints 30.',
       code: 'def total(vals):\n    ___ sum(vals)\nprint(total([10, 20]))',
       chips: ['return', 'print', 'yield', 'def'], answer: 0, expect: '30',
@@ -452,7 +458,7 @@ textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;bo
       expect: 'timber: 500 kg',
       explain: 'Without the f prefix the braces are printed literally.' },
     { id: 'fs-4', topic: 'fstrings', type: 'predict', prompt: P,
-      code: 'print(f"[{"clay":>6}]")',
+      code: 'print(f"[{\'clay\':>6}]")',
       options: ['[  clay]', '[clay  ]', '[ clay ]', '[clay]'], answer: 0,
       explain: '>6 right-aligns in a 6-character column. < aligns left, ^ centres.' },
     { id: 'fs-5', topic: 'fstrings', type: 'blank', prompt: 'Fill the blank to print "1.35 W/m²K".',
@@ -484,7 +490,7 @@ textarea{width:100%;min-height:120px;font:13px/1.4 "JetBrains Mono",monospace;bo
       explain: 'B6 is operational energy use, which is where operational GHG emissions come from. B7 is operational water use.' },
     { id: 'lca-3', topic: 'lca', type: 'mcq', prompt: 'Lower U-value means…',
       options: ['Less heat flows through: better insulation', 'More heat flows through', 'Higher thermal mass', 'Higher embodied GHG emissions'], answer: 0,
-      explain: 'U-value (W/m²K) is the rate of heat flow. Lower is better insulating.' },
+      explain: 'U-value (W/m²K) is the heat flow per square metre for each degree of temperature difference. Lower is better insulating.' },
     { id: 'lca-4', topic: 'lca', type: 'mcq', prompt: 'What does an EPD provide?',
       options: ['Verified life-cycle impacts of a product', 'A building\'s energy rating', 'A thermal comfort survey', 'A planning permit'], answer: 0,
       explain: 'An Environmental Product Declaration reports a product\'s LCA results, usually per declared unit.' },
@@ -520,7 +526,8 @@ let state = load();
 function save() { try { localStorage.setItem(KEY, E.exportState(state)); } catch (e) {} }
 const today = () => E.localDay(new Date());
 
-let run = null; // {ids, i, results[], counts, answered}
+let run = null;
+let wallObserver = null; // {ids, i, results[], counts, answered}
 
 // ---------- home ----------
 function wallSVG(w, h) {
@@ -557,10 +564,11 @@ function calendar() {
 
 function home() {
   const doneToday = state.lastDay === today();
+  const shown = E.displayStreak(state, today());
   const pool = E.pickSession(state, B.QUESTIONS, B.UNLOCKED, today());
   app.innerHTML = `
     <div class="top"><h1>Daily Python</h1><button class="icon" id="gear" aria-label="Backup and settings">⚙︎</button></div>
-    <div class="wall" id="wall"><div class="carve"><b>${state.streak}</b><span>${state.streak === 1 ? 'day' : 'days'} in a row</span></div></div>
+    <div class="wall" id="wall"><div class="carve"><b>${shown}</b><span>${shown === 1 ? 'day' : 'days'} in a row</span></div></div>
     <div class="figs">
       <div class="fig"><b>${state.best}</b><span class="muted">best streak</span></div>
       <div class="fig"><b>${state.freezes}</b><span class="muted">streak freezes</span></div>
@@ -576,7 +584,8 @@ function home() {
   const wall = document.getElementById('wall');
   const draw = () => { const old = wall.querySelector('svg'); if (old) old.remove(); wall.insertAdjacentHTML('afterbegin', wallSVG(wall.clientWidth || 320, wall.clientHeight || 260)); };
   draw();
-  if (window.ResizeObserver) { const ro = new ResizeObserver(draw); ro.observe(wall); }
+  if (wallObserver) wallObserver.disconnect();
+  if (window.ResizeObserver) { wallObserver = new ResizeObserver(draw); wallObserver.observe(wall); }
   document.getElementById('gear').onclick = settings;
   const go = document.getElementById('go');
   if (go) go.onclick = () => start(pool);
@@ -584,7 +593,8 @@ function home() {
 
 // ---------- session ----------
 function start(ids) {
-  run = { ids, i: 0, results: [], counts: state.lastDay !== today() };
+  const day = today();
+  run = { ids, i: 0, results: [], day, counts: state.lastDay !== day };
   question();
 }
 
@@ -676,8 +686,10 @@ function wire(q) {
       built.querySelectorAll('.chip').forEach(c => c.onclick = () => { run.built.splice(+c.dataset.k, 1); render(); });
       bar.innerHTML = `<button class="btn" id="check" ${run.built.length === q.lines.length ? '' : 'disabled'}>Check</button>`;
       document.getElementById('check').onclick = () => {
-        const ok = run.built.every((o, k) => q.lines[o] === q.lines[k]);
-        built.querySelectorAll('.chip').forEach((c, k) => { c.disabled = true; c.style.borderColor = q.lines[run.built[k]] === q.lines[k] ? 'var(--ok)' : 'var(--bad)'; });
+        const orders = [q.lines.map((_, k) => k), ...(q.alts || [])];
+        const match = orders.find(a => a.every((o, k) => q.lines[run.built[k]] === q.lines[o]));
+        const ok = !!match, ref = match || orders[0];
+        built.querySelectorAll('.chip').forEach((c, k) => { c.disabled = true; c.style.borderColor = q.lines[run.built[k]] === q.lines[ref[k]] ? 'var(--ok)' : 'var(--bad)'; });
         pile.querySelectorAll('.chip').forEach(c => c.disabled = true);
         if (!ok) built.insertAdjacentHTML('afterend', `<p class="muted">Correct order:</p><pre class="code">${codeLines(q.lines.join('\n'))}</pre>`);
         answer(q, ok);
@@ -692,7 +704,7 @@ function wire(q) {
 }
 
 function answer(q, ok) {
-  E.recordAnswer(state, q.id, ok, today());
+  E.recordAnswer(state, q.id, ok, run.day);
   save();
   run.results.push(ok);
   document.getElementById('fb').innerHTML = `<div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Correct ✓' : 'Not quite'}</b>${esc(q.explain)}</div>`;
@@ -706,7 +718,7 @@ function finish() {
   const score = run.results.filter(Boolean).length;
   let msg = 'Extra practice: your streak stays as it is.';
   if (run.counts) {
-    const r = E.completeDay(state, today());
+    const r = E.completeDay(state, run.day);
     save();
     msg = r.alreadyDone ? 'Already counted today.' :
       `New layer laid. Streak: ${r.streak} ${r.streak === 1 ? 'day' : 'days'}.` +

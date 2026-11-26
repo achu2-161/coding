@@ -4,6 +4,11 @@ Newest first. Each entry has the date, the chat it came from, what was done, and
 
 ---
 
+## 2026-11-26 · Project manager: Daily Python
+- Adrian asked for a daily phone game to keep Python fresh during busy weeks. He chose a new, separate app (not Python Learn), wanted streaks, and asked for streak freezes.
+- Built Daily Python: 67 verified questions on Phase 1, spaced repetition, streaks with freezes, and backup by copy and paste.
+- **Next up:** play it daily. The tutor chat adds questions as new topics open up.
+
 ## 2026-11-26 · CS50 / C-to-Python coaching
 - Asked for an honest review of my CS50x submissions (copied into github.com/achu2-161/cs50, 69 branches). Said I don't fully remember or understand how many of them were solved, so finished assignments aren't a guide to my level.
 - Said weeks on pointers and memory management felt like a lot of effort for little practical use afterwards.

@@ -1,6 +1,12 @@
 # Projects
 
 ## Learning tools
+### Daily Python (`apps/daily-python/`)
+A phone app with 5 tap-based questions a day: multiple choice, "what does this print?", spot the bug, fill the blank, and put lines in order. It uses spaced repetition, so returning after a break starts with review. Streaks are pictured as a rammed-earth wall that gains a layer each day you practise. You start with 2 streak freezes, earn 1 per 7-day streak, and can hold up to 3.
+- Questions follow `skills.md`: only topics in `UNLOCKED` appear. Every code answer is checked by real Python (`verify_questions.py`).
+- Published as a private artifact, "Daily Python". Progress is stored in the phone's browser; back it up with ⚙︎ → Copy backup.
+- Built 2026-11-26 with 67 questions covering Phase 1.
+
 ### Python Learn (`python_learn.html`, `python_learn_v2.html`)
 A local, single-file HTML app for learning Python.
 - **v1:** library of about 50 concepts in 5 categories (Fundamentals, Data Structures, Functions & Scope, LCA-Specific, Libraries). Quiz and flashcard modes, favourites, filters, localStorage. Slide-in menu to launch study modes.

@@ -71,7 +71,7 @@
 
   // ---- streaks ----
   function completeDay(state, today) {
-    if (state.lastDay === today) {
+    if (state.lastDay !== null && today <= state.lastDay) { // same day, or clock moved back
       return { streak: state.streak, freezesUsed: 0, freezeEarned: false, alreadyDone: true };
     }
     let freezesUsed = 0;
@@ -97,6 +97,13 @@
     return { streak: state.streak, freezesUsed, freezeEarned, alreadyDone: false };
   }
 
+  // Streak to show on the home screen: 0 if the missed days are already more than the freezes.
+  function displayStreak(state, today) {
+    if (state.lastDay === null) return 0;
+    const missed = daysBetween(state.lastDay, today) - 1;
+    return missed > state.freezes ? 0 : state.streak;
+  }
+
   // ---- backup ----
   function exportState(state) { return JSON.stringify(state); }
   function importState(json) {
@@ -108,5 +115,5 @@
     return s;
   }
 
-  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, exportState, importState };
+  return { SESSION_SIZE, localDay, addDays, daysBetween, newState, pickSession, recordAnswer, completeDay, displayStreak, exportState, importState };
 });
