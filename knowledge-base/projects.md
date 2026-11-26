@@ -6,7 +6,7 @@ A phone app with 5 tap-based questions a day: multiple choice, "what does this p
 - Questions follow `skills.md`: only topics in `UNLOCKED` appear. Every code answer is checked by real Python (`verify_questions.py`).
 - Published as a private artifact, "Daily Python": https://claude.ai/artifact/ERB3MyZEsr2YBKGMdFLGyn (artifact id `6ca6d743-656b-459a-aec1-b5ecf4fc08d1`). Progress is stored in the phone's browser; back it up with ⚙︎ → Copy backup.
 - Built 2026-11-26. Coding questions only (58 on Phase 1); Adrian doesn't want PhD/LCA content quizzed here.
-- "Explain more" button under each answer asks Claude for a fuller explanation (uses Adrian's Claude usage; needs his approval the first time).
+- "Explain more" button under each answer opens a short in-app chat with Claude about that question, with follow-ups and clarifying questions (uses Adrian's Claude usage; needs his approval the first time; not saved).
 
 ### Python Learn (`python_learn.html`, `python_learn_v2.html`)
 A local, single-file HTML app for learning Python.

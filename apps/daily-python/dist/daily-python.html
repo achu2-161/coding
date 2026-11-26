@@ -62,8 +62,14 @@ pre.code{margin:0 0 14px;background:var(--code);color:var(--codeink);border-radi
 .fb{border-radius:12px;padding:12px 14px;margin-top:14px}
 .fb.ok{background:var(--okbg)}.fb.bad{background:var(--badbg)}
 .fb b{display:block;margin-bottom:4px}
-.more{white-space:pre-wrap;margin-top:10px;padding:12px 14px;border-radius:12px;background:var(--panel)}
-.more:empty{display:none}
+.chat{display:grid;gap:8px;margin-top:10px}.chat:empty{display:none}
+.msg{white-space:pre-wrap;padding:10px 14px;border-radius:14px;max-width:92%;overflow-wrap:anywhere}
+.msg.claude{background:var(--panel);justify-self:start;border-bottom-left-radius:4px}
+.msg.me{background:var(--ink);color:var(--bg);justify-self:end;border-bottom-right-radius:4px}
+.msg.err{color:var(--bad)}
+.askrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:10px}
+.askrow input{font:16px var(--sans);min-height:48px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--ink)}
+.askrow .btn{width:auto;min-height:48px}
 textarea{width:100%;min-height:120px;font:13px/1.4 var(--mono);border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel);color:var(--ink)}
 .stack{display:grid;gap:10px}
 .done{text-align:center;padding:18px 0}
@@ -205,6 +211,8 @@ textarea{width:100%;min-height:120px;font:13px/1.4 var(--mono);border:1px solid 
         : 'Explain why their pick was wrong and why the correct answer is right.',
       'Step through what Python does line by line where it helps. Use a tiny building-science or LCA example if it helps.',
       'Use Australian English. Say "embodied GHG emissions", never "embodied carbon" or "carbon emissions".',
+      'They may reply with follow-up questions. Keep follow-up answers short (under 100 words).',
+      'If a follow-up is unclear, ask one short clarifying question instead of guessing.',
     ].filter(Boolean).join('\n');
   }
 
@@ -714,7 +722,7 @@ function answer(q, ok, picked) {
   save();
   run.results.push(ok);
   document.getElementById('fb').innerHTML = `<div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Correct ✓' : 'Not quite'}</b>${esc(q.explain)}</div>` +
-    (askClaude ? `<button class="btn ghost" id="more" style="margin-top:10px">Explain more (asks Claude)</button><div class="more" aria-live="polite"></div>` : '');
+    (askClaude ? `<button class="btn ghost" id="more" style="margin-top:10px">Explain more (asks Claude)</button><div class="chat" id="chat" aria-live="polite"></div>` : '');
   const more = document.getElementById('more');
   if (more) more.onclick = () => explainMore(q, picked, ok, more);
   const last = run.i === run.ids.length - 1;
@@ -740,19 +748,55 @@ function finish() {
   run = null;
 }
 
-// ---------- Explain more (Claude) ----------
-async function explainMore(q, picked, ok, btn) {
-  const box = btn.nextElementSibling;
-  btn.disabled = true;
-  box.textContent = 'Thinking…';
+// ---------- Explain more: a short chat with Claude about this question ----------
+function bubble(who, text) {
+  const div = document.createElement('div');
+  div.className = `msg ${who}`;
+  div.textContent = text;
+  document.getElementById('chat').appendChild(div);
+  return div;
+}
+
+async function sendToClaude(convo, ask) {
+  const reply = bubble('claude', 'Thinking…');
+  if (ask) ask.disabled = true;
   try {
-    const res = await askClaude(E.explainPrompt(q, picked, ok), { onText: ({ text }) => { box.textContent = text; } });
-    box.textContent = res.text;
-    btn.remove();
+    const res = await askClaude(convo, { cache: false, onText: ({ text }) => { reply.textContent = text; } });
+    reply.textContent = res.text;
+    convo.push({ role: 'assistant', content: res.text });
+    return true;
   } catch (e) {
-    if (e && e.code === 'not_granted') { askClaude = null; btn.remove(); box.textContent = 'Claude isn\'t available on this page.'; }
-    else { btn.disabled = false; box.textContent = e && e.code === 'rate_limited' ? 'Claude is busy. Try again in a minute.' : 'Couldn\'t reach Claude. Try again.'; }
+    convo.pop(); // drop the message that failed so it can be resent
+    if (e && e.code === 'not_granted') { askClaude = null; reply.textContent = 'Claude isn\'t available on this page.'; return false; }
+    reply.textContent = e && e.code === 'rate_limited' ? 'Claude is busy. Try again in a minute.' : 'Couldn\'t reach Claude. Try again.';
+    reply.classList.add('err');
+    return false;
+  } finally {
+    if (ask) { ask.disabled = false; ask.focus(); }
   }
+}
+
+async function explainMore(q, picked, ok, btn) {
+  btn.remove();
+  const convo = [{ role: 'user', content: E.explainPrompt(q, picked, ok) }];
+  const first = await sendToClaude(convo);
+  if (!first || !askClaude) return;
+  const chat = document.getElementById('chat');
+  const form = document.createElement('form');
+  form.className = 'askrow';
+  form.innerHTML = '<input id="ask" type="text" enterkeyhint="send" autocomplete="off" placeholder="Ask a follow-up…" aria-label="Ask Claude a follow-up"><button class="btn" id="send" type="submit">Send</button>';
+  chat.after(form);
+  const ask = form.querySelector('#ask');
+  form.onsubmit = async ev => {
+    ev.preventDefault();
+    const text = ask.value.trim();
+    if (!text || ask.disabled) return;
+    ask.value = '';
+    bubble('me', text);
+    convo.push({ role: 'user', content: text });
+    await sendToClaude(convo, ask);
+    form.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  };
 }
 
 // ---------- settings ----------

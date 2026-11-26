@@ -98,8 +98,9 @@ def test_lapsed_streak_shows_zero(p):
 FAKE_CLAUDE = """
 window.__prompts = [];
 window.claude = { use: async name => name !== 'sample' ? null : async (input, opts) => {
-  window.__prompts.push(input);
-  const text = 'Claude says: ' + (input.includes('KeyError') ? 'about KeyError' : 'something');
+  window.__prompts.push(JSON.parse(JSON.stringify(input)));
+  const flat = typeof input === 'string' ? input : JSON.stringify(input);
+  const text = 'Claude says: ' + (flat.includes('KeyError') ? 'about KeyError' : 'something');
   if (opts && opts.onText) opts.onText({ text, delta: text });
   return { text, truncated: false };
 } };
@@ -115,10 +116,32 @@ def test_explain_more_asks_claude(p):
     pg.click("#go")
     pg.locator(".opt", has_text="None").click()
     pg.click("#more")
-    pg.wait_for_selector(".more:has-text('Claude says')")
-    prompt = pg.evaluate("window.__prompts[0]")
+    pg.wait_for_selector(".msg.claude:has-text('Claude says')")
+    prompt = pg.evaluate("window.__prompts[0][0].content")
     assert 'print(factors["hemp"])' in prompt and "They picked: None" in prompt and "wrong" in prompt
-    assert "about KeyError" in pg.inner_text(".more")
+    assert "about KeyError" in pg.inner_text(".msg.claude")
+    b.close()
+
+
+def test_follow_up_chat_sends_the_whole_conversation(p):
+    b = p.chromium.launch(executable_path="/usr/bin/google-chrome")
+    pg = b.new_page(viewport={"width": 390, "height": 844})
+    pg.add_init_script(FAKE_CLAUDE)
+    pg.add_init_script(f"localStorage.setItem('{KEY}', {json.dumps(json.dumps(state(cards=only_new('dict-2'))))})")
+    pg.goto(PAGE.as_uri())
+    pg.click("#go")
+    pg.locator(".opt", has_text="None").click()
+    pg.click("#more")
+    pg.wait_for_selector(".msg.claude:has-text('Claude says')")
+    pg.fill("#ask", "why not None like .get()?")
+    pg.press("#ask", "Enter")
+    pg.wait_for_selector(".msg.me:has-text('why not None')")
+    pg.wait_for_function("window.__prompts.length === 2")
+    convo = pg.evaluate("window.__prompts[1]")
+    assert [m["role"] for m in convo] == ["user", "assistant", "user"], convo
+    assert "KeyError" in convo[0]["content"] and convo[2]["content"] == "why not None like .get()?"
+    assert pg.locator(".msg.claude").count() == 2
+    assert pg.evaluate("document.documentElement.scrollWidth") == 390
     b.close()
 
 

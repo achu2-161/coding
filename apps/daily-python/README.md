@@ -6,7 +6,7 @@ Five tap-based questions a day on your phone. Each day you finish adds a layer t
 - **Daily session:** 5 questions. Normally 3 review and 2 new. After a break, it's all review until you're caught up.
 - **Spaced repetition:** a right answer moves a question to a longer gap before it comes back (1 → 2 → 4 → 8 → 16 days). A wrong answer brings it back tomorrow.
 - **Streaks:** finishing a session counts for the day. You start with 2 streak freezes, earn 1 for each 7-day streak, and can hold up to 3. Freezes cover missed days automatically.
-- **Explain more:** under each answer, a button asks Claude for a fuller explanation of that question. You approve it the first time. Each tap uses a little Claude usage.
+- **Explain more:** under each answer, a button asks Claude for a fuller explanation, then you can keep chatting about that question (Claude asks back if a follow-up is unclear). The chat clears when you move on. You approve Claude the first time; each message uses a little Claude usage.
 - **Backup:** progress is stored in your phone's browser. Use ⚙︎ → Copy backup now and then, and paste it into a note.
 
 ## Files

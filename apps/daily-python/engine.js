@@ -129,6 +129,8 @@
         : 'Explain why their pick was wrong and why the correct answer is right.',
       'Step through what Python does line by line where it helps. Use a tiny building-science or LCA example if it helps.',
       'Use Australian English. Say "embodied GHG emissions", never "embodied carbon" or "carbon emissions".',
+      'They may reply with follow-up questions. Keep follow-up answers short (under 100 words).',
+      'If a follow-up is unclear, ask one short clarifying question instead of guessing.',
     ].filter(Boolean).join('\n');
   }
 
