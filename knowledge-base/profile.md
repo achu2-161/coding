@@ -11,7 +11,7 @@
   - whether bio-based materials can scale across the housing stock
   - occupant health, indoor environmental quality, and public health outcomes at scale
 - Also writing a **review paper** on the impacts of retrofit in residential buildings: operational and embodied GHG emissions, plus occupant health and wellbeing.
-- **Upcoming:** PhD confirmation presentation (date not yet recorded here; add it to `goals.md`).
+- **Upcoming:** PhD confirmation presentation, mid-February 2027.
 - **Long-term:** a data storytelling presentation towards the end of the PhD.
 
 ## Research tooling

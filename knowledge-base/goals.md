@@ -10,7 +10,7 @@
 | Milestone | Target date | Status | Notes |
 |---|---|---|---|
 | Finish Phase 1 (Python foundations) | _tbc_ | In progress | |
-| PhD confirmation presentation | _tbc_ | Upcoming | Decide whether its figures will be made in Python (needs Phases 2–3) |
+| PhD confirmation presentation | Mid-Feb 2027 | Upcoming | Not a coding deadline; handled in the PhD chat, not this project |
 | House-icon housing stock visualisation | _tbc_ | Idea / proof of concept | Builds on the bubble proof of concept |
 | End-of-PhD data storytelling presentation | Long-term | Vision | |
 
