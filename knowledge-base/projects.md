@@ -1,0 +1,32 @@
+# Projects
+
+## Learning tools
+### Python Learn (`python_learn.html`, `python_learn_v2.html`)
+A local, single-file HTML app for learning Python.
+- **v1:** library of about 50 concepts in 5 categories (Fundamentals, Data Structures, Functions & Scope, LCA-Specific, Libraries). Quiz and flashcard modes, favourites, filters, localStorage. Slide-in menu to launch study modes.
+- **v2:** adds Lesson Mode with four activities: Explain, Sandbox (real Python via Pyodide), Output Prediction, and Scenario (LCA coding challenges).
+- **Lesson learned:** Pyodide needs a retry loop that waits for `loadPyodide` before calling it, plus a status dot (yellow while loading, green when ready).
+- Inspired by Adrian's earlier Adripedia/Yixiaopedia quiz app.
+
+## Teaching tools
+### ZARUP Interview Picker (`ZARUP_Interview_Picker.html`)
+A spinning wheel that picks oral exam questions (27 questions in 4 categories: GC, LC, BP, BS). Converted from a pygame version.
+- Reads student data from an Excel file (sheets `data_feed` and `Detailed timetables`).
+- Students are ordered by timetable day (Tuesday to Friday).
+- Keeps a log in localStorage, with buttons to save, download as CSV, and clear.
+- **Lesson learned:** the XLSX JS library handles sparse columns badly. Use `header:1` mode with explicit array indexing.
+
+### Unity games
+- A UI matching game with drag-to-match, delayed scoring and colour-coded line feedback.
+- A spin-wheel question selector: 25 questions across 5 themes, eliminating themes one at a time.
+
+## Research visualisation
+### Embodied GHG emissions bubble story (proof of concept)
+A scrollytelling-style animation with about 16,500 bubbles (1 t CO₂e each), spring physics, and a red "hero" bubble that travels between scenes. It has five acts: total emissions, split by material (concrete, steel, timber, glasswool), split by lifecycle stage, embodied vs operational, and a timber substitution scenario.
+- **Next:** replace the bubbles with **house icons** representing dwellings, and apply them to housing stock retrofit scenarios for the confirmation.
+
+### Thermal simulation tools (HTML + Chart.js)
+Hourly passive solar simulators. They went from steady-state models to a two-node RC network running 8,760 hours with explicit Euler. They cover six wall materials (clay brick, concrete block, rammed earth, mud brick, limestone, granite) and three city presets (Athens, Rome, Madrid).
+
+### World map (Python, matplotlib + Natural Earth)
+A borderless world map showing physical features only. Styles tried: antique, hypsometric relief, and flat terrain bands.
